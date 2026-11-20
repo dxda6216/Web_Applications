@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LV200 ROI Analyzer</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<style>
+:root{
+  --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a; --text:#e6e8ec; --muted:#9aa1ad;
+  --accent:#e8b13a; --accent2:#5fb0ff; --danger:#ff6b6b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:13px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;align-items:center;gap:14px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+header h1{font-size:15px;margin:0;font-weight:600;letter-spacing:.2px}
+header .ds{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+button,select,input{font:inherit;color:var(--text)}
+button{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer}
+button:hover{border-color:#3d4452;background:#252a35}
+button.primary{background:var(--accent);color:#1b1405;border-color:var(--accent);font-weight:600}
+button.on{background:#2d3b52;border-color:var(--accent2);color:#fff}
+select,input[type=number],input[type=text]{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+input[type=number]{width:72px}
+label{color:var(--muted)}
+main{display:grid;grid-template-columns:minmax(380px,1fr) minmax(420px,1.15fr);gap:12px;padding:12px;height:calc(100% - 49px)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-height:0}
+.card h2{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:0;padding:10px 12px 0;font-weight:600}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 12px}
+.toolbar .sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+.drop::after{content:"Drop a TIFF, or a .vsi with its folder";position:fixed;inset:10px;border:2px dashed var(--accent);border-radius:14px;background:rgba(15,17,21,.75);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--accent);z-index:60;pointer-events:none}
+#flash{display:none;position:fixed;top:56px;left:50%;transform:translateX(-50%);background:#2a2412;border:1px solid #6b5520;color:#f5d58c;padding:8px 14px;border-radius:8px;z-index:45;font-size:12px;max-width:80vw}
+.spotRow{border-top:1px solid var(--line);margin:0 12px;padding:8px 0}
+.spotRow b{font-weight:600;color:var(--text)}
+#spotStat{font-size:11px;color:var(--muted)}
+#ivSrc{font-size:11px}
+button:disabled{opacity:.45;cursor:default}
+#empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);padding:20px;line-height:1.6}
+#empty code{font-size:11px;color:#cfd3da}
+#viewerWrap{position:relative;flex:1;min-height:260px;margin:0 12px;background:#000;border-radius:6px;overflow:hidden}
+#view{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
+#readout{position:absolute;left:8px;bottom:6px;font:11px ui-monospace,Menlo,monospace;color:#cfd3da;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:4px;pointer-events:none}
+#hint{position:absolute;right:8px;bottom:6px;font-size:11px;color:#cfd3da;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:4px;pointer-events:none;max-width:62%;text-align:right;opacity:.85}
+.frameRow{display:flex;align-items:center;gap:8px;padding:8px 12px}
+.frameRow input[type=range]{flex:1}
+#frameLbl{font:12px ui-monospace,Menlo,monospace;min-width:150px;text-align:right;color:var(--muted)}
+.right{display:grid;grid-template-rows:minmax(300px,1.3fr) minmax(170px,.8fr);gap:12px;min-height:0}
+#plot{flex:1;min-height:0;margin:0 10px 10px;position:relative}
+#plotCv{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
+#tip{position:absolute;pointer-events:none;background:rgba(18,21,27,.94);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:11px;display:none;white-space:nowrap;z-index:2}
+#tip .r{display:flex;gap:10px;justify-content:space-between}
+.roiTable{overflow:auto;flex:1;margin:0 12px 10px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:4px 6px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{color:var(--muted);font-weight:500;position:sticky;top:0;background:var(--panel)}
+tr.sel td{background:#232a37}
+td input[type=text]{width:110px;padding:2px 4px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle}
+.x{background:none;border:none;color:var(--muted);padding:0 4px}
+.x:hover{color:var(--danger)}
+.muted{color:var(--muted)}
+#overlay{position:fixed;inset:0;background:rgba(10,12,16,.82);display:flex;align-items:center;justify-content:center;z-index:50}
+#overlay .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 26px;min-width:340px;text-align:center}
+.bar{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;margin-top:12px}
+.bar>div{height:100%;width:0;background:var(--accent);transition:width .15s}
+#modal{position:fixed;inset:0;background:rgba(10,12,16,.75);display:none;align-items:center;justify-content:center;z-index:40}
+#modal .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;width:min(760px,92vw)}
+#modal textarea{width:100%;height:320px;background:#0b0d11;color:#d6dae1;border:1px solid var(--line);border-radius:6px;font:11px ui-monospace,Menlo,monospace;padding:8px}
+.empty{color:var(--muted);padding:14px 4px}
+@media (max-width:980px){main{grid-template-columns:1fr;height:auto}.right{grid-template-rows:420px auto}#viewerWrap{height:62vh}}
+</style>
+</head>
+<body>
+<header>
+  <h1>LV200 ROI Analyzer</h1>
+  <span class="ds" id="dsName">No file loaded</span>
+  <button id="btnOpen" title="Open a TIFF stack, or an Olympus .vsi together with its .ets file">Open files…</button>
+  <button id="btnFolder" title="Open a folder containing a .vsi and its _name_ folder (or a TIFF)">Open folder…</button>
+  <input type="file" id="fileIn" accept=".tif,.tiff,.vsi,.ets" multiple hidden>
+  <input type="file" id="dirIn" webkitdirectory directory multiple hidden>
+</header>
+<div id="flash"></div>
+
+<main>
+  <section class="card">
+    <h2>Image</h2>
+    <div class="toolbar" id="tools">
+      <button data-tool="select" title="Select / move ROI (V)">Select</button>
+      <button data-tool="rect" title="Rectangle ROI (R)">Rect</button>
+      <button data-tool="ellipse" title="Ellipse ROI (E)">Ellipse</button>
+      <button data-tool="poly" title="Polygon ROI (P) — click vertices, double-click or Enter to close">Polygon</button>
+      <button data-tool="free" title="Freehand ROI (F)">Freehand</button>
+      <span class="sep"></span>
+      <button id="btnFit" title="Fit image to view">Fit</button>
+      <span class="sep"></span>
+      <label>Show</label>
+      <select id="dispMode">
+        <option value="mean">Mean projection</option>
+        <option value="max">Max projection</option>
+        <option value="frame">Current frame</option>
+      </select>
+      <select id="cmap"><option>fire</option><option>gray</option><option>green</option><option>blue</option><option>red</option><option>viridis</option></select>
+    </div>
+    <div class="toolbar" style="padding-top:0">
+      <label>Min</label><input type="number" id="cMin">
+      <label>Max</label><input type="number" id="cMax">
+      <button id="btnAuto" title="Auto contrast (0.5–99.7 percentile)">Auto</button>
+      <label><input type="checkbox" id="autoEach"> auto per frame</label>
+      <span class="sep"></span>
+      <label title="Scale bar (available when the file contains a pixel size)"><input type="checkbox" id="sbOn" disabled> Scale bar</label>
+      <input type="number" id="sbLen" placeholder="auto" min="0" step="any" style="width:62px" title="Length in µm (blank = automatic)"><label>µm</label>
+      <select id="sbPos" title="Position"><option value="br">Bottom right</option><option value="bl">Bottom left</option><option value="tr">Top right</option><option value="tl">Top left</option></select>
+      <select id="sbCol" title="Colour"><option value="#ffffff">White</option><option value="#000000">Black</option><option value="#ffd54a">Yellow</option></select>
+      <label><input type="checkbox" id="sbLbl" checked> Label</label>
+      <span id="sbHint" class="muted" style="font-size:11px"></span>
+    </div>
+    <div class="toolbar spotRow">
+      <b>Spot removal</b>
+      <select id="spMethod" title="Spot-removal method">
+        <option value="median3d" selected>Median 3D</option>
+        <option value="outliers">Remove Outliers</option>
+        <option value="adaptive">Adaptive σ-threshold</option>
+      </select>
+      <span id="spOutl" style="display:none" title="Remove Outliers: a pixel is replaced by the median of a circular neighbourhood if it deviates from that median by more than the threshold. Applied to every frame (2D).">
+        <label>Radius</label><input type="number" id="olR" value="2" min="0.5" max="25" step="0.5" style="width:54px"><label>px</label>
+        <label>Threshold</label><input type="number" id="olT" value="50" min="0" step="any" style="width:70px">
+        <label>Which</label><select id="olW"><option value="bright">Bright</option><option value="dark">Dark</option></select>
+        <span id="olHint" class="muted" style="font-size:11px"></span>
+      </span>
+      <span id="spMedInfo" class="muted" style="font-size:11px" title="Median 3D with X radius 0, Y radius 0, Z radius 1: every pixel becomes the median of itself and the same pixel in the previous and next frame. At the first/last frame only the 2 frames inside the stack are used (their mean).">X 0, Y 0, Z 1 · each pixel = median of frames t−1, t, t+1</span>
+      <span id="spAdaptive" style="display:contents">
+      <label title="Single-frame spikes: pixel much brighter than the same pixel in frames t±1, t±2 (cosmic rays)"><input type="checkbox" id="spT" checked> Temporal (cosmic rays)</label>
+      <label title="Isolated spots: pixel much brighter than its 8 neighbours in the same frame (hot pixels, electrical noise)"><input type="checkbox" id="spS" checked> Spatial (hot pixels / noise)</label>
+      <label title="Detection threshold in units of the local noise σ (lower = more aggressive)">Threshold</label><input type="number" id="spK" value="6" min="2" max="30" step="0.5" style="width:56px"><label>σ</label>
+      <label title="Also replace adjacent pixels above half the threshold (cosmic-ray halos)"><input type="checkbox" id="spG" checked> Grow 1 px</label>
+      </span>
+      <button id="btnSpot" class="primary">Apply</button>
+      <button id="btnSpotUndo" disabled>Undo</button>
+      <label title="Outline the replaced pixels in the current frame (Median 3D: pixels lowered by more than 6σ of the local noise)"><input type="checkbox" id="spMark"> Mark removed</label>
+      <span id="spotStat">Original data</span>
+    </div>
+    <div id="viewerWrap">
+      <canvas id="view"></canvas>
+      <div id="empty"><div>
+        <div style="font-size:15px;color:#e6e8ec;margin-bottom:6px">No image loaded</div>
+        <div>Open a time-lapse <b>TIFF</b> stack, or an Olympus <b>.vsi</b> together with its <code>_name_/stack…/frame_t_*.ets</code> folder.</div>
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:center"><button onclick="$('fileIn').click()">Open files…</button><button onclick="$('dirIn').click()">Open folder…</button></div>
+        <div style="margin-top:10px;font-size:11px">…or drag &amp; drop files or a folder anywhere on this page.</div>
+      </div></div>
+      <div id="hint"></div>
+      <div id="readout"></div>
+    </div>
+    <div class="frameRow">
+      <button id="btnPlay" title="Play / pause (Space)">▶</button>
+      <input type="range" id="frame" min="0" max="0" value="0">
+      <span id="frameLbl">—</span>
+    </div>
+  </section>
+
+  <section class="right">
+    <div class="card">
+      <h2>Intensity over time</h2>
+      <div class="toolbar">
+        <label>Statistic</label>
+        <select id="stat">
+          <option value="mean">Mean</option>
+          <option value="robust">Mean, spike-rejected</option>
+          <option value="median">Median</option>
+          <option value="sum">Integrated (sum)</option>
+        </select>
+        <label><input type="checkbox" id="bgSub" checked> Subtract background ROI</label>
+        <label>Detrend</label>
+        <select id="detrend">
+          <option value="none">None</option>
+          <option value="sub">− 24 h running mean</option>
+          <option value="div">÷ 24 h running mean</option>
+        </select>
+        <label>Smooth</label>
+        <select id="smooth"><option value="1">Off</option><option value="3">3 pt</option><option value="5">5 pt</option><option value="7">7 pt</option><option value="9">9 pt</option></select>
+        <label>Normalize</label>
+        <select id="norm"><option value="none">None</option><option value="mean">÷ mean</option><option value="minmax">Min–max (0–1)</option><option value="z">z-score</option></select>
+      </div>
+      <div class="toolbar" style="padding-top:0">
+        <span class="muted" style="font-size:11px">Drag on the plot to zoom the time axis · double-click to reset · click to jump to that frame</span>
+        <span style="flex:1"></span>
+        <button id="btnZoomReset">Reset zoom</button>
+        <button id="btnPng" title="Save the plot as PNG (white background)">Save PNG</button>
+      </div>
+      <div id="plot"><canvas id="plotCv"></canvas><div id="tip"></div></div>
+    </div>
+    <div class="card">
+      <h2>ROIs</h2>
+      <div class="toolbar">
+        <label>Interval (min)</label><input type="number" id="interval" value="30" min="0.01" step="any"><span id="ivSrc"></span>
+        <label>Pixel (µm)</label><input type="number" id="pxsize" value="1" min="0" step="any"><span id="pxSrc" style="font-size:11px"></span>
+        <span class="sep"></span>
+        <button id="btnCsv">Export CSV</button>
+        <button id="btnRoiOut">Export ROIs</button>
+        <button id="btnRoiIn">Import ROIs</button>
+        <button id="btnClear">Clear all</button>
+      </div>
+      <div class="roiTable"><table id="roiTbl"></table></div>
+    </div>
+  </section>
+</main>
+
+<div id="overlay" style="display:none"><div class="box"><div id="ovMsg">Loading image stack…</div><div class="bar"><div id="ovBar"></div></div><div class="muted" id="ovSub" style="margin-top:8px;font-size:11px"></div></div></div>
+
+<div id="modal"><div class="box">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <b id="mTitle">Export</b>
+    <div style="display:flex;gap:6px"><button id="mCopy" class="primary">Copy</button><button id="mDl">Download</button><button id="mApply" style="display:none" class="primary">Apply</button><button id="mClose">Close</button></div>
+  </div>
+  <div class="muted" id="mNote" style="margin-bottom:6px"></div>
+  <textarea id="mText" spellcheck="false"></textarea>
+</div></div>
+
+<script>
+"use strict";
+// ---------- State ----------
+const S = {
+  w:0,h:0,n:0, frames:[], name:"", interval:30, px:4,
+  proj:{mean:null,max:null},
+  frame:0, tool:"rect",
+  rois:[], sel:-1, nextId:1,
+  view:{scale:1,ox:0,oy:0},
+  drawing:null, drag:null, pan:null, playing:false, spaceDown:false
+};
+const COLORS=["#5fb0ff","#ff7a59","#7ee07e","#f5d04c","#d38cff","#4fe0d2","#ff6fae","#c7c96b","#8ea2ff","#ffb36b","#9be3ff","#e58f8f"];
+const $=id=>document.getElementById(id);
+
+// ---------- Colormaps ----------
+function lutFromStops(stops){const l=new Uint8ClampedArray(256*3);for(let i=0;i<256;i++){const t=i/255;let k=0;while(k<stops.length-2&&t>stops[k+1][0])k++;const a=stops[k],b=stops[k+1],f=(t-a[0])/(b[0]-a[0]||1);for(let c=0;c<3;c++)l[i*3+c]=a[1][c]+(b[1][c]-a[1][c])*f;}return l;}
+const LUTS={
+  gray:lutFromStops([[0,[0,0,0]],[1,[255,255,255]]]),
+  green:lutFromStops([[0,[0,0,0]],[1,[90,255,110]]]),
+  blue:lutFromStops([[0,[0,0,0]],[1,[70,140,255]]]),
+  red:lutFromStops([[0,[0,0,0]],[1,[255,60,50]]]),
+  fire:lutFromStops([[0,[0,0,0]],[.25,[90,0,140]],[.45,[200,20,60]],[.65,[250,110,0]],[.85,[255,210,40]],[1,[255,255,255]]]),
+  viridis:lutFromStops([[0,[68,1,84]],[.25,[59,82,139]],[.5,[33,145,140]],[.75,[94,201,98]],[1,[253,231,37]]])
+};
+
+// ---------- Loading ----------
+function overlay(show,msg,frac,sub){$("overlay").style.display=show?"flex":"none";if(msg!=null)$("ovMsg").textContent=msg;if(frac!=null)$("ovBar").style.width=(frac*100).toFixed(0)+"%";$("ovSub").textContent=sub||"";}
+function computeProjections(){
+  const np=S.w*S.h, mean=new Float32Array(np), max=new Float32Array(np).fill(-Infinity);
+  for(const fr of S.frames)for(let i=0;i<np;i++){const v=fr[i];mean[i]+=v;if(v>max[i])max[i]=v;}
+  for(let i=0;i<np;i++)mean[i]/=S.n;
+  S.proj={mean,max};
+}
+function setStack(st,name,interval,px){
+  const sameDims=S.w===st.w&&S.h===st.h;
+  $("empty").style.display="none";
+  S.w=st.w;S.h=st.h;S.n=st.n;S.raw=st.frames;S.frames=st.frames;S.removed=null;S.cleanInfo=null;S.name=name;S.frame=0;
+  if(typeof $==="function"&&$("spotStat")){$("spotStat").textContent="Original data";$("btnSpotUndo").disabled=true;}
+  S.interval=interval;S.px=px; $("interval").value=+interval.toFixed(4); $("pxsize").value=+(+px).toFixed(4);
+  $("dsName").textContent=name; $("frame").max=S.n-1; $("frame").value=0;
+  computeProjections();
+  if(!sameDims){S.rois=[];S.sel=-1;S.nextId=1;}
+  if(S.playing)togglePlay();
+  img=new ImageData(S.w,S.h); off.width=S.w; off.height=S.h;
+  fit(); autoContrast(); render(); measureAll(); updateTable();
+}
+
+// ---------- Rendering ----------
+const cv=$("view"), ctx=cv.getContext("2d"); const off=document.createElement("canvas"); const octx=off.getContext("2d"); let img=null;
+function displayed(){const m=$("dispMode").value; if(m==="frame")return S.frames[S.frame]; return S.proj[m];}
+function autoContrast(){
+  const a=displayed(); if(!a)return; const step=Math.max(1,Math.floor(a.length/40000)); const s=[];
+  for(let i=0;i<a.length;i+=step)s.push(a[i]); s.sort((x,y)=>x-y);
+  $("cMin").value=Math.round(s[Math.floor(s.length*.005)]); $("cMax").value=Math.round(s[Math.floor(s.length*.997)]);
+}
+function paintImage(){
+  const a=displayed(); if(!a)return; const lo=+$("cMin").value, hi=+$("cMax").value, sc=255/Math.max(1e-9,hi-lo); const L=LUTS[$("cmap").value]; const d=img.data;
+  for(let i=0,j=0;i<a.length;i++,j+=4){let v=(a[i]-lo)*sc;v=v<0?0:v>255?255:v|0;d[j]=L[v*3];d[j+1]=L[v*3+1];d[j+2]=L[v*3+2];d[j+3]=255;}
+  octx.putImageData(img,0,0);
+}
+function resizeCanvas(){const r=cv.getBoundingClientRect(),dpr=window.devicePixelRatio||1;cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);}
+function fit(){resizeCanvas();const r=cv.getBoundingClientRect();if(!S.w)return;const s=Math.min(r.width/S.w,r.height/S.h);S.view={scale:s,ox:(r.width-S.w*s)/2,oy:(r.height-S.h*s)/2};}
+function i2s(x,y){return [x*S.view.scale+S.view.ox,y*S.view.scale+S.view.oy];}
+function s2i(x,y){return [(x-S.view.ox)/S.view.scale,(y-S.view.oy)/S.view.scale];}
+let needPaint=true;
+function render(repaint=true){
+  if(!S.w)return; if(repaint)paintImage();
+  const r=cv.getBoundingClientRect(); ctx.fillStyle="#000"; ctx.fillRect(0,0,r.width,r.height);
+  ctx.imageSmoothingEnabled=false; ctx.drawImage(off,S.view.ox,S.view.oy,S.w*S.view.scale,S.h*S.view.scale);
+  if($("spMark").checked&&S.removed&&S.removed[S.frame]){const sc=S.view.scale;ctx.strokeStyle="#00e5ff";ctx.lineWidth=1;
+    for(const i of S.removed[S.frame]){const x=i%S.w,y=(i/S.w)|0;const [a,b]=i2s(x,y);ctx.strokeRect(a-0.5,b-0.5,Math.max(2,sc)+1,Math.max(2,sc)+1);}}
+  drawScaleBar();
+  S.rois.forEach((roi,k)=>drawShape(roi.shape,roi.color,k===S.sel,roi.name+(roi.bg?" (BG)":""),roi.bg));
+  if(S.drawing){const d=S.drawing; drawShape(d.shape,"#ffffff",true,null,false,d.type==="poly"?d.hover:null);}
+  $("frameLbl").textContent=`frame ${S.frame+1}/${S.n} · ${(S.frame*S.interval/60).toFixed(1)} h`;
+}
+function niceLen(x){const p=Math.pow(10,Math.floor(Math.log10(x)));const m=x/p;return (m>=5?5:m>=2?2:1)*p;}
+function drawScaleBar(){
+  if(!$("sbOn").checked||!S.w)return; const px=+$("pxsize").value; if(!(px>0))return;
+  const widthUm=S.w*px; let L=+$("sbLen").value; if(!(L>0))L=niceLen(widthUm/5); const lenPx=L/px; if(lenPx>S.w*0.95)return;
+  const pos=$("sbPos").value, col=$("sbCol").value, m=S.w*0.04, th=Math.max(S.h*0.012,1);
+  const ix=pos[1]==="r"?S.w-m-lenPx:m, iy=pos[0]==="b"?S.h-m-th:m+(($("sbLbl").checked)?S.h*0.055:0);
+  const [x0,y0]=i2s(ix,iy); const sw=lenPx*S.view.scale, sh=Math.max(2,th*S.view.scale);
+  ctx.save(); ctx.fillStyle=col; ctx.fillRect(x0,y0,sw,sh);
+  if($("sbLbl").checked){const fs=Math.max(10,Math.min(32,S.h*0.04*S.view.scale));ctx.font=`600 ${fs}px system-ui,sans-serif`;ctx.textAlign="center";ctx.textBaseline="bottom";
+    const txt=(L>=1000&&L%1000===0)?(L/1000)+" mm":(+L.toPrecision(4))+" µm";
+    ctx.shadowColor=col==="#000000"?"rgba(255,255,255,.6)":"rgba(0,0,0,.7)";ctx.shadowBlur=3;ctx.fillText(txt,x0+sw/2,y0-fs*0.2);}
+  ctx.restore();
+}
+function tracePath(sh){
+  ctx.beginPath();
+  if(sh.type==="rect"){const [a,b]=i2s(sh.x,sh.y);ctx.rect(a,b,sh.w*S.view.scale,sh.h*S.view.scale);}
+  else if(sh.type==="ellipse"){const [a,b]=i2s(sh.cx,sh.cy);ctx.ellipse(a,b,Math.abs(sh.rx)*S.view.scale,Math.abs(sh.ry)*S.view.scale,0,0,Math.PI*2);}
+  else if(sh.type==="poly"){sh.pts.forEach((p,i)=>{const [a,b]=i2s(p[0],p[1]);i?ctx.lineTo(a,b):ctx.moveTo(a,b);});if(sh.closed!==false)ctx.closePath();}
+}
+function drawShape(sh,color,selected,label,dashed,hover){
+  ctx.save(); tracePath(sh);
+  if(hover&&sh.pts.length){const [a,b]=i2s(hover[0],hover[1]);ctx.lineTo(a,b);}
+  if(selected){ctx.fillStyle=color+"26";ctx.fill();}
+  ctx.setLineDash(dashed?[5,4]:[]); ctx.lineWidth=selected?2.2:1.5; ctx.strokeStyle=color; ctx.stroke();
+  if(label){const b=bbox(sh);const [a,c]=i2s(b.x0,b.y0);ctx.font="600 11px system-ui,sans-serif";const tw=ctx.measureText(label).width;ctx.fillStyle="rgba(0,0,0,.6)";ctx.fillRect(a,c-16,tw+8,15);ctx.fillStyle=color;ctx.fillText(label,a+4,c-5);}
+  ctx.restore();
+}
+
+// ---------- Geometry ----------
+function normShape(sh){if(sh.type==="rect"){if(sh.w<0){sh.x+=sh.w;sh.w=-sh.w;}if(sh.h<0){sh.y+=sh.h;sh.h=-sh.h;}}if(sh.type==="ellipse"){sh.rx=Math.abs(sh.rx);sh.ry=Math.abs(sh.ry);}return sh;}
+function bbox(sh){if(sh.type==="rect")return{x0:Math.min(sh.x,sh.x+sh.w),y0:Math.min(sh.y,sh.y+sh.h),x1:Math.max(sh.x,sh.x+sh.w),y1:Math.max(sh.y,sh.y+sh.h)};
+  if(sh.type==="ellipse")return{x0:sh.cx-Math.abs(sh.rx),y0:sh.cy-Math.abs(sh.ry),x1:sh.cx+Math.abs(sh.rx),y1:sh.cy+Math.abs(sh.ry)};
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const [x,y] of sh.pts){x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y);}return{x0,y0,x1,y1};}
+function inside(sh,x,y){
+  if(sh.type==="rect")return x>=sh.x&&x<sh.x+sh.w&&y>=sh.y&&y<sh.y+sh.h;
+  if(sh.type==="ellipse"){const dx=(x-sh.cx)/sh.rx,dy=(y-sh.cy)/sh.ry;return dx*dx+dy*dy<=1;}
+  let c=false;const p=sh.pts;for(let i=0,j=p.length-1;i<p.length;j=i++){if(((p[i][1]>y)!==(p[j][1]>y))&&(x<(p[j][0]-p[i][0])*(y-p[i][1])/(p[j][1]-p[i][1])+p[i][0]))c=!c;}return c;
+}
+function maskIdx(sh){
+  const b=bbox(sh); const out=[];
+  const x0=Math.max(0,Math.floor(b.x0)),x1=Math.min(S.w-1,Math.ceil(b.x1)),y0=Math.max(0,Math.floor(b.y0)),y1=Math.min(S.h-1,Math.ceil(b.y1));
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)if(inside(sh,x+.5,y+.5))out.push(y*S.w+x);
+  return Int32Array.from(out);
+}
+function moveShape(sh,dx,dy){if(sh.type==="rect"){sh.x+=dx;sh.y+=dy;}else if(sh.type==="ellipse"){sh.cx+=dx;sh.cy+=dy;}else sh.pts.forEach(p=>{p[0]+=dx;p[1]+=dy;});}
+
+// ---------- Measurement ----------
+function measure(roi){
+  const idx=maskIdx(roi.shape); roi.area=idx.length; const n=S.n;
+  const mean=new Float64Array(n),med=new Float64Array(n),rob=new Float64Array(n),sum=new Float64Array(n);
+  const buf=new Float64Array(idx.length);
+  for(let f=0;f<n;f++){const fr=S.frames[f];let s=0;for(let k=0;k<idx.length;k++){const v=fr[idx[k]];buf[k]=v;s+=v;}
+    sum[f]=s; mean[f]=idx.length?s/idx.length:NaN;
+    if(idx.length){const so=buf.slice(0,idx.length).sort();const m=quant(so,.5);med[f]=m;
+      const dev=new Float64Array(so.length);for(let k=0;k<so.length;k++)dev[k]=Math.abs(so[k]-m);dev.sort();const mad=1.4826*quant(dev,.5)||1;
+      const lim=m+5*mad;let rs=0,rc=0;for(let k=0;k<so.length;k++){if(so[k]<=lim){rs+=so[k];rc++;}}rob[f]=rc?rs/rc:m;}
+    else{med[f]=rob[f]=NaN;}
+  }
+  roi.raw={mean,median:med,robust:rob,sum};
+}
+function quant(sorted,q){if(!sorted.length)return NaN;const p=(sorted.length-1)*q,i=Math.floor(p),f=p-i;return i+1<sorted.length?sorted[i]*(1-f)+sorted[i+1]*f:sorted[i];}
+function measureAll(){S.rois.forEach(measure);updatePlot();}
+
+function runMean(a,win){const n=a.length,h=Math.floor(win/2),o=new Float64Array(n);for(let i=0;i<n;i++){let s=0,c=0;for(let j=Math.max(0,i-h);j<=Math.min(n-1,i+h);j++){if(isFinite(a[j])){s+=a[j];c++;}}o[i]=c?s/c:NaN;}return o;}
+function processed(roi){
+  const stat=$("stat").value; let y=Float64Array.from(roi.raw[stat]);
+  const bg=S.rois.find(r=>r.bg);
+  if($("bgSub").checked&&bg&&bg!==roi){
+    const bgv=stat==="sum"?bg.raw.mean:bg.raw[stat==="median"?"median":(stat==="robust"?"robust":"mean")];
+    for(let i=0;i<y.length;i++)y[i]-=stat==="sum"?bgv[i]*roi.area:bgv[i];
+  }
+  const dt=$("detrend").value;
+  if(dt!=="none"){const win=Math.max(3,Math.round(24*60/S.interval)|1);const tr=runMean(y,win);for(let i=0;i<y.length;i++)y[i]=dt==="sub"?y[i]-tr[i]:y[i]/tr[i];}
+  const sm=+$("smooth").value; if(sm>1)y=runMean(y,sm);
+  const nm=$("norm").value;
+  if(nm!=="none"){const v=[...y].filter(isFinite);const mu=v.reduce((a,b)=>a+b,0)/v.length;
+    if(nm==="mean")y=y.map(x=>x/mu);
+    else if(nm==="minmax"){const lo=Math.min(...v),hi=Math.max(...v);y=y.map(x=>(x-lo)/(hi-lo||1));}
+    else{const sd=Math.sqrt(v.reduce((a,b)=>a+(b-mu)**2,0)/v.length)||1;y=y.map(x=>(x-mu)/sd);}}
+  return y;
+}
+function timeAxis(){return Array.from({length:S.n},(_,i)=>i*S.interval/60);}
+function yLabel(){const st={mean:"Mean intensity",robust:"Mean intensity (spike-rejected)",median:"Median intensity",sum:"Integrated intensity"}[$("stat").value];
+  const parts=[st];if($("bgSub").checked&&S.rois.some(r=>r.bg))parts.push("BG-subtracted");if($("detrend").value!=="none")parts.push("detrended");if($("norm").value!=="none")parts.push("normalized");
+  return parts[0]+(parts.length>1?" ("+parts.slice(1).join(", ")+")":"")+" [a.u.]";}
+
+// ---------- Plot (self-contained canvas chart, no external libraries) ----------
+const PL={traces:[],xr:null,hoverI:-1,sel:null,yLabel:""};
+const plotCv=$("plotCv"), tip=$("tip");
+const THEMES={
+  dark:{bg:null,axis:"#5b6270",grid:"#262b35",text:"#c9ced6",muted:"#9aa1ad",cursor:"#e8b13a",hover:"rgba(255,255,255,.35)"},
+  light:{bg:"#ffffff",axis:"#333333",grid:"#e6e6e6",text:"#111111",muted:"#555555",cursor:"#c58a00",hover:"rgba(0,0,0,.3)"}
+};
+function niceStep(range,target){const raw=range/Math.max(1,target);const p=Math.pow(10,Math.floor(Math.log10(raw)));const m=raw/p;return (m<1.5?1:m<3?2:m<7?5:10)*p;}
+function timeStep(range,target){const c=[0.5,1,2,3,6,12,24,48,96];const raw=range/Math.max(1,target);for(const v of c)if(v>=raw)return v;return niceStep(range,target);}
+function fmtNum(v,step){if(!isFinite(v))return "";const a=Math.abs(v);if(a>=1e5||(a>0&&a<1e-3))return v.toExponential(1);const d=Math.max(0,Math.min(6,-Math.floor(Math.log10(step)+1e-9)));return v.toFixed(d);}
+function fmtVal(v){if(!isFinite(v))return "—";const a=Math.abs(v);return a>=1e5||(a>0&&a<1e-3)?v.toExponential(3):(+v.toPrecision(5)).toString();}
+function xRange(){const t1=(S.n-1)*S.interval/60;return PL.xr||[0,Math.max(t1,1e-6)];}
+function plotGeom(W,H,ctx){
+  // legend layout (wraps)
+  ctx.font="11px system-ui,sans-serif"; const items=[]; let x=64,y=8; const lh=16, maxW=W-14;
+  for(const t of PL.traces){const w=22+ctx.measureText(t.name).width+14; if(x+w>maxW&&x>64){x=64;y+=lh;} items.push({t,x,y}); x+=w;}
+  const top=PL.traces.length?y+lh+8:12;
+  return {l:64,r:14,t:top,b:40,legend:items,W,H};
+}
+function drawPlot(ctx,W,H,themeName){
+  const th=THEMES[themeName]; ctx.save(); ctx.clearRect(0,0,W,H); if(th.bg){ctx.fillStyle=th.bg;ctx.fillRect(0,0,W,H);}
+  const g=plotGeom(W,H,ctx); const pw=W-g.l-g.r, ph=H-g.t-g.b; if(pw<20||ph<20){ctx.restore();return null;}
+  const [x0,x1]=xRange(); const T=PL.t||[];
+  // y range from visible data within x range
+  let lo=Infinity,hi=-Infinity;
+  for(const tr of PL.traces)for(let i=0;i<T.length;i++){if(T[i]<x0||T[i]>x1)continue;const v=tr.y[i];if(isFinite(v)){if(v<lo)lo=v;if(v>hi)hi=v;}}
+  if(!isFinite(lo)){lo=0;hi=1;} if(hi===lo){hi+=Math.abs(hi)*.05||1;lo-=Math.abs(lo)*.05||1;}
+  const pad=(hi-lo)*.06; lo-=pad; hi+=pad;
+  const ys=niceStep(hi-lo,Math.max(3,Math.round(ph/55))); const xs=timeStep(x1-x0,Math.max(3,Math.round(pw/80)));
+  const X=v=>g.l+(v-x0)/(x1-x0)*pw, Y=v=>g.t+(hi-v)/(hi-lo)*ph;
+  // grid + ticks
+  ctx.font="11px system-ui,sans-serif"; ctx.lineWidth=1;
+  ctx.strokeStyle=th.grid; ctx.fillStyle=th.text; ctx.textAlign="right"; ctx.textBaseline="middle";
+  for(let v=Math.ceil(lo/ys)*ys;v<=hi+1e-9;v+=ys){const yy=Math.round(Y(v))+.5;ctx.beginPath();ctx.moveTo(g.l,yy);ctx.lineTo(g.l+pw,yy);ctx.stroke();ctx.fillText(fmtNum(v,ys),g.l-6,yy);}
+  ctx.textAlign="center"; ctx.textBaseline="top";
+  for(let v=Math.ceil(x0/xs)*xs;v<=x1+1e-9;v+=xs){const xx=Math.round(X(v))+.5;ctx.beginPath();ctx.moveTo(xx,g.t);ctx.lineTo(xx,g.t+ph);ctx.stroke();ctx.fillText(fmtNum(v,xs),xx,g.t+ph+5);}
+  ctx.strokeStyle=th.axis; ctx.strokeRect(g.l+.5,g.t+.5,pw,ph);
+  // axis titles
+  ctx.fillStyle=th.muted; ctx.fillText("Time (h)",g.l+pw/2,g.t+ph+22);
+  ctx.save(); ctx.translate(13,g.t+ph/2); ctx.rotate(-Math.PI/2); ctx.textBaseline="middle";
+  let yl=PL.yLabel; while(ctx.measureText(yl).width>ph&&yl.length>10)yl=yl.slice(0,-2); if(yl!==PL.yLabel)yl+="…"; ctx.fillText(yl,0,0); ctx.restore();
+  // traces
+  ctx.save(); ctx.beginPath(); ctx.rect(g.l,g.t,pw,ph); ctx.clip();
+  for(const tr of PL.traces){ctx.strokeStyle=tr.color; ctx.lineWidth=tr.width; ctx.setLineDash(tr.dash?[4,4]:[]); ctx.lineJoin="round"; ctx.beginPath(); let pen=false;
+    for(let i=0;i<T.length;i++){const v=tr.y[i]; if(!isFinite(v)){pen=false;continue;} const px=X(T[i]),py=Y(v); pen?ctx.lineTo(px,py):ctx.moveTo(px,py); pen=true;} ctx.stroke();}
+  ctx.setLineDash([]);
+  // current frame line
+  if(themeName==="dark"){const cx=X(S.frame*S.interval/60);ctx.strokeStyle=th.cursor;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(cx,g.t);ctx.lineTo(cx,g.t+ph);ctx.stroke();ctx.setLineDash([]);
+    if(PL.hoverI>=0){const hx=X(T[PL.hoverI]);ctx.strokeStyle=th.hover;ctx.beginPath();ctx.moveTo(hx,g.t);ctx.lineTo(hx,g.t+ph);ctx.stroke();
+      for(const tr of PL.traces){const v=tr.y[PL.hoverI];if(isFinite(v)){ctx.fillStyle=tr.color;ctx.beginPath();ctx.arc(hx,Y(v),3,0,Math.PI*2);ctx.fill();}}}
+    if(PL.sel){const a=X(Math.min(PL.sel[0],PL.sel[1])),b=X(Math.max(PL.sel[0],PL.sel[1]));ctx.fillStyle="rgba(95,176,255,.15)";ctx.fillRect(a,g.t,b-a,ph);}
+  }
+  ctx.restore();
+  // legend
+  ctx.textAlign="left"; ctx.textBaseline="middle";
+  for(const it of g.legend){ctx.strokeStyle=it.t.color;ctx.lineWidth=2;ctx.setLineDash(it.t.dash?[4,3]:[]);ctx.beginPath();ctx.moveTo(it.x,it.y+7);ctx.lineTo(it.x+16,it.y+7);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=th.text;ctx.fillText(it.t.name,it.x+22,it.y+7);}
+  if(!PL.traces.length){ctx.textAlign="center";ctx.fillStyle=th.muted;ctx.font="13px system-ui,sans-serif";ctx.fillText("Draw an ROI on the image to plot its intensity over time",g.l+pw/2,g.t+ph/2);}
+  ctx.restore();
+  return {g,pw,ph,X,x0,x1};
+}
+let plotLayout=null;
+function renderPlot(){
+  const r=plotCv.getBoundingClientRect(),dpr=window.devicePixelRatio||1; if(!r.width)return;
+  if(plotCv.width!==Math.round(r.width*dpr)||plotCv.height!==Math.round(r.height*dpr)){plotCv.width=Math.round(r.width*dpr);plotCv.height=Math.round(r.height*dpr);}
+  const c=plotCv.getContext("2d"); c.setTransform(dpr,0,0,dpr,0,0); plotLayout=drawPlot(c,r.width,r.height,"dark");
+}
+function updatePlot(){
+  PL.t=timeAxis(); const bgSub=$("bgSub").checked;
+  PL.traces=S.rois.filter(r=>r.visible&&!(r.bg&&bgSub)).map(r=>({name:r.name+(r.bg?" (BG)":""),y:processed(r),color:r.color,width:S.rois.indexOf(r)===S.sel?2.6:1.5,dash:r.bg}));
+  PL.yLabel=yLabel(); renderPlot();
+}
+let cursorRaf=0;
+function updateCursor(){if(cursorRaf)return;cursorRaf=requestAnimationFrame(()=>{cursorRaf=0;renderPlot();});}
+function plotXAt(e){const r=plotCv.getBoundingClientRect();const mx=e.clientX-r.left;if(!plotLayout)return null;const {g,pw,x0,x1}=plotLayout;return {mx,my:e.clientY-r.top,t:x0+(mx-g.l)/pw*(x1-x0),inside:mx>=g.l&&mx<=g.l+pw};}
+function nearestI(t){return Math.max(0,Math.min(S.n-1,Math.round(t*60/S.interval)));}
+plotCv.addEventListener("mousemove",e=>{
+  const p=plotXAt(e); if(!p)return;
+  if(PL.drag){PL.sel=[PL.drag.t,Math.max(xRange()[0],Math.min(xRange()[1],p.t))];}
+  if(!p.inside||!PL.traces.length){PL.hoverI=-1;tip.style.display="none";renderPlot();return;}
+  const i=nearestI(p.t); PL.hoverI=i;
+  let h=`<div style="margin-bottom:3px;color:#9aa1ad">${(i*S.interval/60).toFixed(1)} h · frame ${i+1}</div>`;
+  for(const tr of PL.traces)h+=`<div class="r"><span><span class="sw" style="background:${tr.color};width:9px;height:9px"></span> ${esc(tr.name)}</span><b>${fmtVal(tr.y[i])}</b></div>`;
+  tip.innerHTML=h; tip.style.display="block";
+  const W=plotCv.clientWidth; const tw=tip.offsetWidth; tip.style.left=(p.mx+14+tw>W?p.mx-14-tw:p.mx+14)+"px"; tip.style.top=Math.max(4,p.my-10)+"px";
+  renderPlot();
+});
+plotCv.addEventListener("mouseleave",()=>{PL.hoverI=-1;tip.style.display="none";renderPlot();});
+plotCv.addEventListener("mousedown",e=>{const p=plotXAt(e);if(p&&p.inside){PL.drag={t:p.t,mx:p.mx};PL.sel=null;}});
+window.addEventListener("mouseup",e=>{
+  if(!PL.drag)return; const p=plotXAt(e); const d=PL.drag; PL.drag=null;
+  if(p&&Math.abs(p.mx-d.mx)>5&&PL.sel){const a=Math.min(...PL.sel),b=Math.max(...PL.sel);if(b-a>S.interval/60)PL.xr=[a,b];PL.sel=null;renderPlot();}
+  else{PL.sel=null;if(p)setFrame(nearestI(p.t));}
+});
+plotCv.addEventListener("dblclick",()=>{PL.xr=null;renderPlot();});
+$("btnZoomReset").onclick=()=>{PL.xr=null;renderPlot();};
+$("btnPng").onclick=()=>{
+  const W=1200,H=700,sc=2; const c=document.createElement("canvas"); c.width=W*sc; c.height=H*sc; const x=c.getContext("2d"); x.scale(sc,sc);
+  const keep=PL.hoverI; PL.hoverI=-1; drawPlot(x,W,H,"light"); PL.hoverI=keep;
+  c.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="roi_timecourse.png";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);},"image/png");
+};
+new ResizeObserver(()=>renderPlot()).observe($("plot"));
+
+// ---------- ROI table ----------
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function updateTable(){
+  const tb=$("roiTbl"); if(!S.rois.length){tb.innerHTML='<tr><td class="empty">No ROIs yet. Pick Rect / Ellipse / Polygon / Freehand and draw on the image. Mark one region of empty background as BG to subtract it.</td></tr>';return;}
+  const px=+$("pxsize").value||0;
+  let h='<tr><th></th><th>Name</th><th>Show</th><th>BG</th><th>Shape</th><th>Area (px)</th><th>Area (µm²)</th><th>Mean (all frames)</th><th></th></tr>';
+  S.rois.forEach((r,k)=>{const m=r.raw?r.raw.mean.reduce((a,b)=>a+b,0)/S.n:NaN;
+    h+=`<tr data-k="${k}" class="${k===S.sel?"sel":""}"><td><span class="sw" style="background:${r.color}"></span></td><td><input type="text" value="${esc(r.name)}" data-act="name"></td>
+    <td><input type="checkbox" data-act="vis" ${r.visible?"checked":""}></td><td><input type="radio" name="bg" data-act="bg" ${r.bg?"checked":""} title="Use as background"></td>
+    <td class="muted">${r.shape.type==="poly"?"polygon":r.shape.type}</td><td>${r.area}</td><td>${px?(r.area*px*px).toFixed(0):"—"}</td><td>${m.toFixed(1)}</td>
+    <td><button class="x" data-act="del" title="Delete">✕</button></td></tr>`;});
+  tb.innerHTML=h;
+}
+$("roiTbl").addEventListener("click",e=>{const tr=e.target.closest("tr[data-k]");if(!tr)return;const k=+tr.dataset.k,act=e.target.dataset.act;
+  if(act==="del"){deleteRoi(k);return;}
+  if(act==="bg"){const was=S.rois[k].bg;S.rois.forEach(r=>r.bg=false);S.rois[k].bg=!was;e.target.checked=!was;}
+  if(act==="vis"){S.rois[k].visible=e.target.checked;}
+  if(act!=="name"){S.sel=k;updateTable();updatePlot();render(false);}else{S.sel=k;render(false);}
+});
+$("roiTbl").addEventListener("input",e=>{if(e.target.dataset.act==="name"){const k=+e.target.closest("tr").dataset.k;S.rois[k].name=e.target.value||("ROI "+(k+1));render(false);clearTimeout(window._nt);window._nt=setTimeout(updatePlot,250);}});
+function addRoi(shape){const id=S.nextId++;const usedColors=S.rois.map(r=>r.color);const color=COLORS.find(c=>!usedColors.includes(c))||COLORS[(id-1)%COLORS.length];
+  const roi={id,name:"ROI "+id,shape:normShape(shape),color,visible:true,bg:false};measure(roi);if(!roi.area)return;S.rois.push(roi);S.sel=S.rois.length-1;updateTable();updatePlot();render(false);}
+function deleteRoi(k){S.rois.splice(k,1);S.sel=Math.min(S.sel,S.rois.length-1);if(S.sel===k)S.sel=-1;updateTable();updatePlot();render(false);}
+
+// ---------- Mouse interaction ----------
+function evPos(e){const r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];}
+function setTool(t){S.tool=t;S.drawing=null;document.querySelectorAll("#tools [data-tool]").forEach(b=>b.classList.toggle("on",b.dataset.tool===t));
+  $("hint").textContent={select:"Click an ROI to select · drag to move · Del to delete",rect:"Drag to draw a rectangle",ellipse:"Drag to draw an ellipse",poly:"Click vertices · double-click / Enter to close · Esc to cancel",free:"Drag to trace an outline"}[t]+" · wheel = zoom · Space/middle-drag = pan";
+  cv.style.cursor=t==="select"?"default":"crosshair";render(false);}
+document.querySelectorAll("#tools [data-tool]").forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
+function hitRoi(x,y){for(let k=S.rois.length-1;k>=0;k--)if(inside(S.rois[k].shape,x,y))return k;return -1;}
+cv.addEventListener("mousedown",e=>{
+  if(!S.w)return; const [sx,sy]=evPos(e); const [x,y]=s2i(sx,sy);
+  if(e.button===1||S.spaceDown||e.button===2){S.pan={sx,sy,ox:S.view.ox,oy:S.view.oy};e.preventDefault();return;}
+  if(S.tool==="select"){const k=hitRoi(x,y);S.sel=k;if(k>=0)S.drag={k,x,y,moved:false};updateTable();updatePlot();render(false);return;}
+  if(S.tool==="rect")S.drawing={type:"rect",shape:{type:"rect",x,y,w:0,h:0}};
+  else if(S.tool==="ellipse")S.drawing={type:"ellipse",x0:x,y0:y,shape:{type:"ellipse",cx:x,cy:y,rx:0,ry:0}};
+  else if(S.tool==="free")S.drawing={type:"free",shape:{type:"poly",pts:[[x,y]],closed:false}};
+  else if(S.tool==="poly"){
+    if(!S.drawing)S.drawing={type:"poly",shape:{type:"poly",pts:[[x,y]],closed:false},hover:[x,y]};
+    else{const p0=S.drawing.shape.pts[0];const [a,b]=i2s(p0[0],p0[1]);if(S.drawing.shape.pts.length>2&&Math.hypot(a-sx,b-sy)<8){finishPoly();return;}S.drawing.shape.pts.push([x,y]);}
+  }
+  render(false);
+});
+window.addEventListener("mousemove",e=>{
+  if(!S.w)return; const [sx,sy]=evPos(e); const [x,y]=s2i(sx,sy);
+  if(e.target===cv){const ix=Math.floor(x),iy=Math.floor(y);if(ix>=0&&iy>=0&&ix<S.w&&iy<S.h){const v=displayed()[iy*S.w+ix];$("readout").textContent=`x ${ix}  y ${iy}  value ${(+v).toFixed(1)}`;}else $("readout").textContent="";}
+  if(S.pan){S.view.ox=S.pan.ox+sx-S.pan.sx;S.view.oy=S.pan.oy+sy-S.pan.sy;render(false);return;}
+  if(S.drag){const r=S.rois[S.drag.k];moveShape(r.shape,x-S.drag.x,y-S.drag.y);S.drag.x=x;S.drag.y=y;S.drag.moved=true;render(false);return;}
+  const d=S.drawing;if(!d)return;
+  if(d.type==="rect"&&e.buttons&1){d.shape.w=x-d.shape.x;d.shape.h=y-d.shape.y;}
+  else if(d.type==="ellipse"&&e.buttons&1){if(e.shiftKey){const r=Math.max(Math.abs(x-d.x0),Math.abs(y-d.y0))/2;d.shape.cx=d.x0+Math.sign(x-d.x0)*r;d.shape.cy=d.y0+Math.sign(y-d.y0)*r;d.shape.rx=d.shape.ry=r;}else{d.shape.cx=(d.x0+x)/2;d.shape.cy=(d.y0+y)/2;d.shape.rx=Math.abs(x-d.x0)/2;d.shape.ry=Math.abs(y-d.y0)/2;}}
+  else if(d.type==="free"&&e.buttons&1){const l=d.shape.pts[d.shape.pts.length-1];if(Math.hypot(l[0]-x,l[1]-y)*S.view.scale>2)d.shape.pts.push([x,y]);}
+  else if(d.type==="poly"){d.hover=[x,y];}
+  render(false);
+});
+window.addEventListener("mouseup",()=>{
+  if(S.pan){S.pan=null;return;}
+  if(S.drag){const {k,moved}=S.drag;S.drag=null;if(moved){measure(S.rois[k]);updateTable();updatePlot();}return;}
+  const d=S.drawing;if(!d||d.type==="poly")return;S.drawing=null;
+  const b=bbox(d.shape);if((b.x1-b.x0)*S.view.scale<3||(b.y1-b.y0)*S.view.scale<3){render(false);return;}
+  if(d.type==="free"){if(d.shape.pts.length<3){render(false);return;}d.shape.closed=true;}
+  addRoi(d.shape);
+});
+cv.addEventListener("dblclick",e=>{if(S.drawing&&S.drawing.type==="poly"){const p=S.drawing.shape.pts;if(p.length>3)p.pop();finishPoly();}});
+cv.addEventListener("contextmenu",e=>e.preventDefault());
+function finishPoly(){const d=S.drawing;S.drawing=null;if(d.shape.pts.length>=3){d.shape.closed=true;addRoi(d.shape);}else render(false);}
+cv.addEventListener("wheel",e=>{if(!S.w)return;e.preventDefault();const [sx,sy]=evPos(e);const f=Math.exp(-e.deltaY*0.0015);const ns=Math.min(64,Math.max(.2,S.view.scale*f));const k=ns/S.view.scale;
+  S.view.ox=sx-(sx-S.view.ox)*k;S.view.oy=sy-(sy-S.view.oy)*k;S.view.scale=ns;render(false);},{passive:false});
+
+// ---------- Keyboard ----------
+window.addEventListener("keydown",e=>{
+  if(e.target.matches("input,textarea,select"))return;
+  const k=e.key.toLowerCase();
+  if(e.key===" "){e.preventDefault();if(!S.spaceDown){S.spaceDown=true;S._spaceT=performance.now();}return;}
+  if(e.key==="Escape"){S.drawing=null;render(false);}
+  else if(e.key==="Enter"&&S.drawing&&S.drawing.type==="poly")finishPoly();
+  else if((e.key==="Delete"||e.key==="Backspace")&&S.sel>=0)deleteRoi(S.sel);
+  else if(e.key==="ArrowRight")setFrame(S.frame+1);
+  else if(e.key==="ArrowLeft")setFrame(S.frame-1);
+  else if({v:"select",r:"rect",e:"ellipse",p:"poly",f:"free"}[k])setTool({v:"select",r:"rect",e:"ellipse",p:"poly",f:"free"}[k]);
+});
+window.addEventListener("keyup",e=>{if(e.key===" "){S.spaceDown=false;if(performance.now()-S._spaceT<200&&!S.pan)togglePlay();}});
+
+// ---------- Frames / playback ----------
+function setFrame(f){if(!S.n)return;S.frame=Math.max(0,Math.min(S.n-1,f));$("frame").value=S.frame;
+  if($("dispMode").value==="frame"){if($("autoEach").checked)autoContrast();render(true);}else render(false);updateCursor();}
+$("frame").oninput=e=>setFrame(+e.target.value);
+let playT=null;
+function togglePlay(){S.playing=!S.playing;$("btnPlay").textContent=S.playing?"❚❚":"▶";
+  if(S.playing){if($("dispMode").value!=="frame"){$("dispMode").value="frame";autoContrast();}playT=setInterval(()=>setFrame((S.frame+1)%S.n),70);}else clearInterval(playT);}
+$("btnPlay").onclick=togglePlay;
+$("dispMode").onchange=()=>{autoContrast();render(true);};
+$("cmap").onchange=()=>render(true);
+$("cMin").onchange=$("cMax").onchange=()=>render(true);
+$("btnAuto").onclick=()=>{autoContrast();render(true);};
+$("btnFit").onclick=()=>{fit();render(false);};
+["stat","bgSub","detrend","smooth","norm"].forEach(id=>$(id).onchange=updatePlot);
+$("interval").onchange=()=>{const v=+$("interval").value;if(v>0){S.interval=v;updatePlot();render(false);}};
+$("pxsize").onchange=updateTable;
+window.addEventListener("resize",()=>{const old=S.view;fit();render(false);});
+
+// ---------- Export / import ----------
+function modal(title,text,note,applyFn){$("mTitle").textContent=title;$("mText").value=text;$("mNote").textContent=note||"";$("modal").style.display="flex";$("mText").readOnly=!applyFn;
+  $("mApply").style.display=applyFn?"":"none";$("mDl").style.display=applyFn?"none":"";$("mCopy").style.display=applyFn?"none":"";$("mApply").onclick=()=>{try{applyFn($("mText").value);$("modal").style.display="none";}catch(err){$("mNote").textContent="Error: "+err.message;}};
+  if(!applyFn)setTimeout(()=>$("mText").select(),30);else $("mText").focus();}
+$("mDl").onclick=()=>{const t=$("mText").value;const isCsv=$("mTitle").textContent.includes("CSV");const blob=new Blob([t],{type:isCsv?"text/csv":"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(isCsv?"roi_timecourse.csv":"rois.json");document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);};
+$("mClose").onclick=()=>$("modal").style.display="none";
+$("mCopy").onclick=async()=>{try{await navigator.clipboard.writeText($("mText").value);$("mCopy").textContent="Copied ✓";}catch{$("mText").select();document.execCommand&&document.execCommand("copy");$("mCopy").textContent="Copied ✓";}setTimeout(()=>$("mCopy").textContent="Copy",1400);};
+$("btnCsv").onclick=()=>{
+  if(!S.rois.length){modal("Export CSV","","Draw at least one ROI first.");return;}
+  const t=timeAxis(); const rs=S.rois; const proc=rs.map(processed); const stat=$("stat").value;
+  const head=["frame","time_h",...rs.map(r=>`${r.name}${r.bg?" (BG)":""}`),...rs.map(r=>`${r.name}_raw_${stat}`)];
+  const lines=[`# ${S.name}`,`# interval_min=${S.interval}; statistic=${stat}; bg_subtracted=${$("bgSub").checked&&rs.some(r=>r.bg)}; detrend=${$("detrend").value}; smooth=${$("smooth").value}; normalize=${$("norm").value}; spot_removal=${S.cleanInfo?(S.cleanInfo.method==="median3d"?"Median 3D (x=0,y=0,z=1)":S.cleanInfo.method==="outliers"?`Remove Outliers (radius=${S.cleanInfo.radius},threshold=${S.cleanInfo.thr},which=${S.cleanInfo.which},replaced_px=${S.cleanInfo.tot})`:`temporal=${S.cleanInfo.temporal},spatial=${S.cleanInfo.spatial},threshold=${S.cleanInfo.k}sigma,grow=${S.cleanInfo.grow},replaced_px=${S.cleanInfo.tot}`):"none"}`,
+    `# areas_px: ${rs.map(r=>r.name+"="+r.area).join("; ")}`,head.map(h=>'"'+h.replace(/"/g,'""')+'"').join(",")];
+  for(let i=0;i<S.n;i++)lines.push([i+1,t[i].toFixed(3),...proc.map(p=>fmt(p[i])),...rs.map(r=>fmt(r.raw[stat][i]))].join(","));
+  modal("Export CSV",lines.join("\n"),"Processed columns match the plot; *_raw_* columns are the unprocessed ROI statistic. Copy and paste into Excel, Prism, R, etc.");
+};
+function fmt(v){return isFinite(v)?(+v.toPrecision(7)).toString():"";}
+$("btnRoiOut").onclick=()=>modal("Export ROIs",JSON.stringify({image:{w:S.w,h:S.h,name:S.name},rois:S.rois.map(r=>({name:r.name,bg:r.bg,color:r.color,shape:r.shape}))},null,1),"Save this JSON to restore the ROI set later (Import ROIs). Coordinates are in image pixels of the loaded stack.");
+$("btnRoiIn").onclick=()=>modal("Import ROIs","","Paste ROI JSON exported from this app, then click Apply.",txt=>{
+  const j=JSON.parse(txt); let sx=1,sy=1; if(j.image&&j.image.w&&j.image.w!==S.w){sx=S.w/j.image.w;sy=S.h/j.image.h;}
+  for(const r of j.rois){const sh=JSON.parse(JSON.stringify(r.shape));
+    if(sx!==1){if(sh.type==="rect"){sh.x*=sx;sh.y*=sy;sh.w*=sx;sh.h*=sy;}else if(sh.type==="ellipse"){sh.cx*=sx;sh.cy*=sy;sh.rx*=sx;sh.ry*=sy;}else sh.pts=sh.pts.map(p=>[p[0]*sx,p[1]*sy]);}
+    const id=S.nextId++;const roi={id,name:r.name||("ROI "+id),bg:!!r.bg,color:r.color||COLORS[(id-1)%COLORS.length],shape:sh,visible:true};measure(roi);if(roi.area)S.rois.push(roi);}
+  if(S.rois.filter(r=>r.bg).length>1){let f=false;S.rois.forEach(r=>{if(r.bg){if(f)r.bg=false;f=true;}});}
+  updateTable();updatePlot();render(false);});
+$("btnClear").onclick=()=>{S.rois=[];S.sel=-1;S.nextId=1;updateTable();updatePlot();render(false);};
+
+// ---------- File reading: TIFF, Olympus VSI/ETS ----------
+const MS={ms:1/60000,msec:1/60000,s:1/60,sec:1/60,second:1/60,seconds:1/60,min:1,minute:1,minutes:1,h:60,hr:60,hour:60,hours:60};
+function medianDiff(a){const d=[];for(let i=1;i<a.length;i++)d.push(a[i]-a[i-1]);d.sort((x,y)=>x-y);return d.length?d[d.length>>1]:NaN;}
+// Find interval (min) in free text metadata. Returns {min,src} or null.
+function intervalFromText(txt,label){
+  if(!txt)return null; let m;
+  // ImageJ hyperstack description
+  if((m=txt.match(/finterval=([\d.eE+-]+)/))){const u=(txt.match(/tunit=(\S+)/)||[])[1]||"sec";const f=MS[u.toLowerCase()]||1/60;const v=+m[1]*f;if(v>0)return{min:v,src:label+" (ImageJ finterval)"};}
+  // OME-XML
+  if((m=txt.match(/TimeIncrement="([\d.eE+-]+)"/))){const u=(txt.match(/TimeIncrementUnit="([^"]+)"/)||[])[1]||"s";const v=+m[1]*(MS[u.toLowerCase()]||1/60);if(v>0)return{min:v,src:label+" (OME TimeIncrement)"};}
+  const dts=[...txt.matchAll(/DeltaT="([\d.eE+-]+)"(?:[^>]*?DeltaTUnit="([^"]+)")?[^>]*?TheT="(\d+)"|TheT="(\d+)"[^>]*?DeltaT="([\d.eE+-]+)"(?:[^>]*?DeltaTUnit="([^"]+)")?/g)];
+  if(dts.length>1){const byT=new Map();for(const x of dts){const t=+(x[3]??x[4]),v=+(x[1]??x[5]),u=(x[2]??x[6]??"s").toLowerCase();if(!byT.has(t))byT.set(t,v*(MS[u]||1/60));}
+    const arr=[...byT.entries()].sort((a,b)=>a[0]-b[0]).map(e=>e[1]);const v=medianDiff(arr);if(v>0)return{min:v,src:label+" (OME DeltaT)"};}
+  // Olympus cellSens metadata exported by Bio-Formats / ImageJ:  "Value #001 = 0.5" + "Units #001 = 10^-3s^1"
+  const units={};for(const x of txt.matchAll(/Units #(\d+)\s*=\s*10\^(-?\d+)s\^1/g))if(units[+x[1]]==null)units[+x[1]]=Math.pow(10,+x[2]);
+  // the list can appear more than once: split into runs of consecutive indices and use the longest increasing run
+  const runs=[];let cur=[],prev=-1;
+  for(const x of txt.matchAll(/Value #(\d+)\s*=\s*([\d.eE+-]+)/g)){const k=+x[1];if(units[k]==null){prev=-1;continue;}
+    if(k!==prev+1&&cur.length){runs.push(cur);cur=[];} cur.push(+x[2]*units[k]); prev=k;}
+  if(cur.length)runs.push(cur);
+  let best=null;for(const r of runs){if(r.length<2)continue;let inc=true;for(let i=1;i<r.length;i++)if(r[i]<=r[i-1]){inc=false;break;}if(inc&&(!best||r.length>best.length))best=r;}
+  if(best){const v=medianDiff(best)/60;if(v>0)return{min:v,src:label+" (cellSens time stamps, "+best.length+")"};}
+  // Generic "frame/time interval = 30 min" phrases
+  if((m=txt.match(/(?:frame|time)[ _-]?interval\s*[=:]\s*([\d.eE+-]+)\s*\(?\s*(ms|msec|s|sec|seconds?|min|minutes?|h|hr|hours?)?/i))){const v=+m[1]*(MS[(m[2]||"s").toLowerCase()]||1/60);if(v>0)return{min:v,src:label+" (time interval field)"};}
+  return null;
+}
+
+function readTiff(buf){
+  const dv=new DataView(buf); const bo=dv.getUint16(0);
+  if(bo!==0x4949&&bo!==0x4D4D) throw new Error("Not a TIFF file");
+  const le=bo===0x4949; const magic=dv.getUint16(2,le);
+  if(magic===43) throw new Error("BigTIFF is not supported — please save as a standard TIFF stack (e.g. ImageJ: File › Save As › Tiff).");
+  if(magic!==42) throw new Error("Not a TIFF file");
+  const TS={1:1,2:1,3:2,4:4,5:8,6:1,7:1,8:2,9:4,10:8,11:4,12:8};
+  function val(type,off,i){switch(type){case 1:case 2:case 7:return dv.getUint8(off+i);case 3:return dv.getUint16(off+i*2,le);case 4:return dv.getUint32(off+i*4,le);case 5:return dv.getUint32(off+i*8,le)/dv.getUint32(off+i*8+4,le);case 6:return dv.getInt8(off+i);case 8:return dv.getInt16(off+i*2,le);case 9:return dv.getInt32(off+i*4,le);case 11:return dv.getFloat32(off+i*4,le);case 12:return dv.getFloat64(off+i*8,le);case 10:return dv.getInt32(off+i*8,le)/dv.getInt32(off+i*8+4,le);}return 0;}
+  const ifds=[]; let off=dv.getUint32(4,le); const seen=new Set();
+  while(off&&!seen.has(off)&&off<buf.byteLength){
+    seen.add(off); const cnt=dv.getUint16(off,le); const tags={};
+    for(let i=0;i<cnt;i++){const e=off+2+i*12;const tag=dv.getUint16(e,le),type=dv.getUint16(e+2,le),c=dv.getUint32(e+4,le);const sz=(TS[type]||1)*c;const vo=sz<=4?e+8:dv.getUint32(e+8,le);
+      if(type===2){let s="";for(let k=0;k<c;k++){const ch=dv.getUint8(vo+k);if(!ch)break;s+=String.fromCharCode(ch);}tags[tag]=s;}
+      else if(tag===50839){tags[tag]={off:vo,len:sz};}
+      else if(tag===273||tag===279||c<=16){const a=[];for(let k=0;k<c;k++)a.push(val(type,vo,k));tags[tag]=a;}}
+    ifds.push(tags); off=dv.getUint32(off+2+cnt*12,le);
+    if(ifds.length===1&&ifds[0][270]&&/^ImageJ/.test(ifds[0][270])&&ifds[0][270].includes("images=")){/* ImageJ: other IFDs only repeat geometry */}
+  }
+  const t0=ifds[0]; const w=t0[256][0],h=t0[257][0]; const bps=(t0[258]||[8])[0]; const comp=(t0[259]||[1])[0];
+  const fmt=(t0[339]||[1])[0]; const spp=(t0[277]||[1])[0];
+  if(comp!==1) throw new Error("Compressed TIFFs are not supported (compression="+comp+"). Please save the stack uncompressed.");
+  if(spp!==1) throw new Error("Only single-channel (grayscale) stacks are supported.");
+  const desc=t0[270]||""; let nIJ=0, unit=null;
+  if(desc.startsWith("ImageJ")){const m=desc.match(/images=(\d+)/);if(m)nIJ=+m[1];const u=desc.match(/(?:^|\n)unit=(\S+)/);if(u)unit=u[1];}
+  // ImageJ "Info" property (IJMetadata tag) — UTF-16 text
+  let info="";
+  if(t0[50839]){const {off:o,len}=t0[50839];const bytes=new Uint8Array(buf,o,len);
+    for(const enc of [le?"utf-16le":"utf-16be",le?"utf-16be":"utf-16le"]){try{const s=new TextDecoder(enc).decode(bytes);if(/[A-Za-z]{4}/.test(s)){info=s;break;}}catch(e){}}}
+  const iv=intervalFromText(desc,"TIFF description")||intervalFromText(info,"TIFF metadata");
+  // Pixel size (µm): ImageJ unit + XResolution, OME-XML PhysicalSizeX, or TIFF ResolutionUnit = cm
+  const US={micron:1,microns:1,um:1,"µm":1,"\u00b5m":1,"μm":1,nm:1e-3,nanometer:1e-3,mm:1e3,cm:1e4,m:1e6};
+  let pxsize=null;
+  const ome=desc.match(/PhysicalSizeX="([\d.eE+-]+)"/);
+  if(ome){const u=(desc.match(/PhysicalSizeXUnit="([^"]+)"/)||[])[1]||"µm";const f=US[u.toLowerCase()]??US[u];if(f&&+ome[1]>0)pxsize=+ome[1]*f;}
+  if(pxsize==null&&t0[282]){const r=t0[282][0]; if(r>0){
+    const uKey=unit?unit.replace(/\\u00B5/i,"µ").toLowerCase():null;
+    if(uKey&&US[uKey]!=null)pxsize=US[uKey]/r;
+    else if(!unit&&(t0[296]||[2])[0]===3)pxsize=1e4/r;}}
+  if(pxsize!=null&&!(pxsize>0&&pxsize<1e5))pxsize=null;
+  const bpp=bps/8, np=w*h; const Arr=(bps===32&&fmt===3)?Float32Array:(bps===16?(fmt===2?Int16Array:Uint16Array):(bps===8?Uint8Array:(bps===32?Uint32Array:null)));
+  if(!Arr) throw new Error("Unsupported bit depth: "+bps);
+  const frameStrips=[];
+  const pages=ifds.filter(t=>t[256]&&t[256][0]===w&&t[257][0]===h);
+  if(nIJ>pages.length){const base=t0[273][0]; for(let i=0;i<nIJ;i++)frameStrips.push([[base+i*np*bpp,np*bpp]]);}
+  else for(const p of pages){const so=p[273],sc=p[279]||[np*bpp];frameStrips.push(so.map((o,k)=>[o,sc[k]]));}
+  const n=frameStrips.length; const all=new Arr(np*n); const frames=[];
+  const native=(new Uint8Array(new Uint16Array([1]).buffer))[0]===1; const swap=bpp>1&&(le!==native);
+  for(let f=0;f<n;f++){
+    const dst=all.subarray(f*np,(f+1)*np); let p=0;
+    for(const [o,len] of frameStrips[f]){const cntPix=Math.min(len/bpp|0,np-p);
+      if(!swap){new Uint8Array(dst.buffer,dst.byteOffset+p*bpp,cntPix*bpp).set(new Uint8Array(buf,o,cntPix*bpp));}
+      else if(bpp===2){for(let i=0;i<cntPix;i++)dst[p+i]=fmt===2?dv.getInt16(o+i*2,le):dv.getUint16(o+i*2,le);}
+      else{for(let i=0;i<cntPix;i++)dst[p+i]=fmt===3?dv.getFloat32(o+i*4,le):dv.getUint32(o+i*4,le);}
+      p+=cntPix;}
+    frames.push(dst);
+  }
+  return {w,h,n,frames,interval:iv,pxsize};
+}
+
+// Olympus .ets (pixel container referenced by a .vsi). Raw (uncompressed) tiles only.
+function readEts(buf){
+  const dv=new DataView(buf); const tag=s=>String.fromCharCode(...new Uint8Array(buf,s,3));
+  if(tag(0)!=="SIS")throw new Error("Not an Olympus .ets file");
+  const ndim=dv.getInt32(12,true), addOff=Number(dv.getBigInt64(16,true)), chunkOff=Number(dv.getBigInt64(32,true)), nChunks=dv.getInt32(40,true);
+  if(tag(addOff)!=="ETS")throw new Error("ETS header not found");
+  const pixType=dv.getInt32(addOff+8,true), sizeC=dv.getInt32(addOff+12,true), comp=dv.getInt32(addOff+20,true), tX=dv.getInt32(addOff+28,true), tY=dv.getInt32(addOff+32,true);
+  const COMP={0:"raw",2:"JPEG",3:"JPEG 2000",5:"lossless JPEG",8:"PNG",9:"BMP"};
+  if(comp!==0)throw new Error("This .ets uses "+(COMP[comp]||"compression "+comp)+" tiles; only uncompressed (raw) image data is supported. Export the series as TIFF from cellSens / Fiji instead.");
+  const PT={1:[Int8Array,1],2:[Uint8Array,1],3:[Int16Array,2],4:[Uint16Array,2],5:[Int32Array,4],6:[Uint32Array,4],9:[Float32Array,4],10:[Float64Array,8]}[pixType];
+  if(!PT)throw new Error("Unsupported ETS pixel type "+pixType);
+  const [Arr,bpp]=PT; const rec=4+4*ndim+16; const chunks=[];
+  for(let i=0;i<nChunks;i++){const o=chunkOff+i*rec;const d=[];for(let k=0;k<ndim;k++)d.push(dv.getInt32(o+4+k*4,true));chunks.push({d,off:Number(dv.getBigInt64(o+4+ndim*4,true)),n:dv.getInt32(o+12+ndim*4,true)});}
+  // dims 0,1 = tile x,y; the remaining dim with the most distinct values is time; others (Z, channel, pyramid level) use index 0
+  let tDim=-1,best=1;for(let k=2;k<ndim;k++){const s=new Set(chunks.map(c=>c.d[k])).size;if(s>best){best=s;tDim=k;}}
+  const use=chunks.filter(c=>c.d.every((v,k)=>k<2||k===tDim||v===0));
+  const nx=Math.max(...use.map(c=>c.d[0]))+1, ny=Math.max(...use.map(c=>c.d[1]))+1;
+  const tVals=tDim<0?[0]:[...new Set(use.map(c=>c.d[tDim]))].sort((a,b)=>a-b); const tIdx=new Map(tVals.map((v,i)=>[v,i]));
+  const w=nx*tX,h=ny*tY,np=w*h,n=tVals.length; const OutArr=bpp===8?Float32Array:Arr; const all=new OutArr(np*n); const frames=[];
+  for(let f=0;f<n;f++)frames.push(all.subarray(f*np,(f+1)*np));
+  for(const c of use){const fr=frames[tDim<0?0:tIdx.get(c.d[tDim])];const need=tX*tY*sizeC*bpp;if(c.n<need)continue;
+    const tile=(c.off%bpp===0)?new Arr(buf,c.off,tX*tY*sizeC):new Arr(buf.slice(c.off,c.off+need));
+    const x0=c.d[0]*tX,y0=c.d[1]*tY;
+    for(let y=0;y<tY;y++){const row=(y0+y)*w+x0;for(let x=0;x<tX;x++)fr[row+x]=tile[(y*tX+x)*sizeC];}}
+  return {w,h,n,frames,sizeC};
+}
+// Time stamps in a .vsi: cellSens stores one 8-byte double (ms) per time point at a fixed byte stride.
+function vsiInterval(buf,nT){
+  const u8=new Uint8Array(buf), dv=new DataView(buf); const cands=[];
+  for(let i=4;i<u8.length-8;i++){if(u8[i-4]===8&&u8[i-3]===0&&u8[i-2]===0&&u8[i-1]===0){const d=dv.getFloat64(i,true);if(isFinite(d)&&d>=0&&d<1e13)cands.push([i,d]);}}
+  const pos=new Map(cands); let best=[];
+  for(let a=0;a<cands.length;a++)for(let b=a+1;b<Math.min(cands.length,a+6);b++){
+    const s=cands[b][0]-cands[a][0],step=cands[b][1]-cands[a][1]; if(step<=0)continue;
+    const run=[cands[a][1],cands[b][1]]; let p=cands[b][0]+s;
+    while(pos.has(p)&&Math.abs(pos.get(p)-run[run.length-1]-step)<=0.05*step+1){run.push(pos.get(p));p+=s;}
+    const better=nT&&run.length===nT&&best.length!==nT ? true : (best.length===nT&&nT? false : run.length>best.length);
+    if(better)best=run;
+  }
+  if(best.length<3)return null;
+  // units: cellSens uses ms ("10^-3s^1"); fall back to s if only "10^0s^1" is present
+  let txt="";try{txt=new TextDecoder("utf-16le").decode(u8);}catch(e){}
+  const f=(!txt.includes("10^-3s^1")&&txt.includes("10^0s^1"))?1/60:1/60000;
+  return {min:medianDiff(best)*f,src:".vsi time stamps ("+best.length+")"};
+}
+
+// Pixel size in a .vsi: frame-scale tag (2019, fallback 20007) holding two doubles (µm/px in x and y)
+function vsiPixelSize(buf){
+  const u8=new Uint8Array(buf),dv=new DataView(buf);
+  for(const tagId of [2019,20007]){const lo=tagId&255,hi=tagId>>8;
+    for(let i=0;i+28<u8.length;i++){
+      if(u8[i]===lo&&u8[i+1]===hi&&u8[i+2]===0&&u8[i+3]===0&&u8[i+8]===16&&u8[i+9]===0&&u8[i+10]===0&&u8[i+11]===0){
+        const a=dv.getFloat64(i+12,true),b=dv.getFloat64(i+20,true);if(isFinite(a)&&a>1e-4&&a<1e4&&Math.abs(a-b)<1e-9*a)return a;}}}
+  return null;
+}
+// Collect files (from <input multiple>, folder input or drop) and load the best candidate
+async function loadFiles(list){
+  const files=[...list]; if(!files.length)return;
+  const lower=f=>(f.webkitRelativePath||f.relPath||f.name).toLowerCase();
+  const tifs=files.filter(f=>/\.tiff?$/i.test(f.name)), vsis=files.filter(f=>/\.vsi$/i.test(f.name)), etss=files.filter(f=>/\.ets$/i.test(f.name));
+  try{
+    if(etss.length){
+      // prefer the .ets that belongs to a selected .vsi (folder _name_/stackN/), then the largest
+      let cand=etss;
+      if(vsis.length){const base=vsis[0].name.replace(/\.vsi$/i,"").toLowerCase();const m=etss.filter(e=>lower(e).includes("_"+base+"_"));if(m.length)cand=m;}
+      const ets=cand.slice().sort((a,b)=>b.size-a.size)[0];
+      overlay(true,"Reading "+ets.name+"…",.15,(ets.size/1e6).toFixed(1)+" MB");
+      const st=readEts(await ets.arrayBuffer());
+      let iv=null,px=null,label=ets.name;
+      if(vsis.length){overlay(true,"Reading metadata from "+vsis[0].name+"…",.8);const vb=await vsis[0].arrayBuffer();iv=vsiInterval(vb,st.n);px=vsiPixelSize(vb);label=vsis[0].name;}
+      finishLoad(st,label+"  ("+st.w+"×"+st.h+", "+st.n+" frames)",iv,px,vsis.length?null:"Select the .vsi together with the .ets to read the interval automatically.");
+      return;
+    }
+    if(vsis.length){
+      overlay(true,"This .vsi holds only metadata.",0,"Its pixels are in the folder  _"+vsis[0].name.replace(/\.vsi$/i,"")+"_/stack…/frame_t_0.ets  saved next to it. Use “Open folder…” on the folder that contains both, or select the .vsi and the .ets together.");
+      setTimeout(()=>overlay(false),9000); return;
+    }
+    if(tifs.length){
+      const f=tifs[0]; overlay(true,"Reading "+f.name+"…",.2,(f.size/1e6).toFixed(1)+" MB");
+      const buf=await f.arrayBuffer(); overlay(true,"Parsing TIFF…",.6); await new Promise(r=>setTimeout(r,20));
+      const st=readTiff(buf);
+      finishLoad(st,f.name+"  ("+st.w+"×"+st.h+", "+st.n+" frames)",st.interval,st.pxsize,null); return;
+    }
+    overlay(true,"No .tif, .tiff, .vsi or .ets file found in the selection.",0); setTimeout(()=>overlay(false),4000);
+  }catch(e){console.error(e);overlay(true,"Error: "+e.message,0);setTimeout(()=>overlay(false),7000);}
+}
+function finishLoad(st,name,iv,px,note){
+  const interval=iv?iv.min:(+$("interval").value||30);
+  setStack(st,name,interval,px||+$("pxsize").value||1);
+  setPxSource(!!px); if($("spMethod").value==="outliers")updateOlHint();
+  setIvSource(iv?("from "+iv.src):"not found in file — enter manually",!!iv);
+  overlay(false); if(note)flash(note);
+}
+function setPxSource(ok){S.pxFromFile=ok;const e=$("pxSrc");e.textContent=ok?"from file":"not in file";e.style.color=ok?"#7ee07e":"#f5b84c";
+  $("sbOn").disabled=!ok; if(!ok)$("sbOn").checked=false; $("sbOn").checked=ok?$("sbOn").checked:false; $("sbHint").textContent=ok?"":"(needs pixel size from the file)"; render(false);}
+function setIvSource(txt,ok){const e=$("ivSrc");e.textContent=txt;e.style.color=ok?"#7ee07e":"#f5b84c";}
+function flash(msg){const e=$("flash");e.textContent=msg;e.style.display="block";clearTimeout(flash._t);flash._t=setTimeout(()=>e.style.display="none",7000);}
+// Drag & drop including folders
+async function entriesToFiles(items){
+  const out=[]; const walk=async(ent,path)=>{if(ent.isFile){await new Promise(r=>ent.file(f=>{f.relPath=path+f.name;out.push(f);r();},r));}
+    else if(ent.isDirectory){const rd=ent.createReader();for(;;){const batch=await new Promise(r=>rd.readEntries(r,()=>r([])));if(!batch.length)break;for(const b of batch)await walk(b,path+ent.name+"/");}}};
+  for(const it of items){const ent=it.webkitGetAsEntry&&it.webkitGetAsEntry();if(ent)await walk(ent,"");else if(it.getAsFile){const f=it.getAsFile();if(f)out.push(f);}}
+  return out;
+}
+$("btnOpen").onclick=()=>$("fileIn").click();
+$("btnFolder").onclick=()=>$("dirIn").click();
+$("fileIn").onchange=e=>{loadFiles(e.target.files);e.target.value="";};
+$("dirIn").onchange=e=>{loadFiles(e.target.files);e.target.value="";};
+document.addEventListener("dragover",e=>{e.preventDefault();document.body.classList.add("drop");});
+document.addEventListener("dragleave",e=>{if(!e.relatedTarget)document.body.classList.remove("drop");});
+document.addEventListener("drop",async e=>{e.preventDefault();document.body.classList.remove("drop");
+  const items=[...(e.dataTransfer.items||[])]; const files=items.length?await entriesToFiles(items):[...e.dataTransfer.files]; loadFiles(files);});
+
+// ---------- Spot removal (cosmic rays / hot pixels / electrical noise) ----------
+// Temporal test: pixel vs. median of the same pixel in frames t±1, t±2  → single-frame spikes (cosmic rays)
+// Spatial test : pixel vs. median of its 8 neighbours in the same frame → isolated spots / hot pixels
+// Threshold = k × σ(level); σ is estimated robustly (MAD) as a function of intensity, so bright cells are not clipped.
+const tick=()=>new Promise(r=>setTimeout(r,0));
+function tBase(fr,t,i){ // robust estimate from neighbouring frames t±1, t±2 (excludes frame t)
+  const n=S.n;
+  if(t>=2&&t<=n-3){const a=fr[t-2][i],b=fr[t-1][i],c=fr[t+1][i],d=fr[t+2][i];
+    const mn=a<b?(a<c?(a<d?a:d):(c<d?c:d)):(b<c?(b<d?b:d):(c<d?c:d)), mx=a>b?(a>c?(a>d?a:d):(c>d?c:d)):(b>c?(b>d?b:d):(c>d?c:d));
+    return (a+b+c+d-mn-mx)/2;}
+  let s=0,k=0,mn=Infinity,mx=-Infinity;
+  for(let d=-2;d<=2;d++){if(!d)continue;const u=t+d;if(u>=0&&u<n){const v=fr[u][i];s+=v;k++;if(v<mn)mn=v;if(v>mx)mx=v;}}
+  if(k>=3)return (s-mn-mx)/(k-2); return k?s/k:fr[t][i];
+}
+const _nb=new Float64Array(8);
+function sBase(f,i){ // median of 8 neighbours (edge-clamped)
+  const w=S.w,h=S.h,x=i%w,y=(i/w)|0;let k=0;
+  for(let dy=-1;dy<=1;dy++){const yy=Math.min(h-1,Math.max(0,y+dy));for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const xx=Math.min(w-1,Math.max(0,x+dx));_nb[k++]=f[yy*w+xx];}}
+  _nb.sort(); return (_nb[3]+_nb[4])/2;
+}
+function noiseModel(sample){ // sample: array of [level, residual]
+  sample.sort((a,b)=>a[0]-b[0]); const nb=24, per=Math.max(50,Math.floor(sample.length/nb)); const pts=[];
+  for(let s=0;s+per<=sample.length;s+=per){const sl=sample.slice(s,s+per);const lv=sl[sl.length>>1][0];const r=sl.map(x=>x[1]).sort((a,b)=>a-b);const med=r[r.length>>1];
+    const dev=r.map(x=>Math.abs(x-med)).sort((a,b)=>a-b);pts.push([lv,Math.max(1e-6,1.4826*dev[dev.length>>1])]);}
+  for(let i=1;i<pts.length;i++)pts[i][1]=Math.max(pts[i][1],pts[i-1][1]*0.9); // keep roughly monotone
+  return lv=>{if(lv<=pts[0][0])return pts[0][1];for(let i=1;i<pts.length;i++)if(lv<=pts[i][0]){const a=pts[i-1],b=pts[i],f=(lv-a[0])/(b[0]-a[0]||1);return a[1]+(b[1]-a[1])*f;}return pts[pts.length-1][1];};
+}
+function lut(model,lo,hi){const N=2048,t=new Float64Array(N);for(let i=0;i<N;i++)t[i]=model(lo+(hi-lo)*i/(N-1));const sc=(N-1)/((hi-lo)||1);return v=>{let j=((v-lo)*sc)|0;j=j<0?0:j>=N?N-1:j;return t[j];};}
+
+async function removeSpots(opt){
+  if(!S.n)return; const np=S.w*S.h, n=S.n, t0=performance.now();
+  // start from the original data every time
+  const Ctor=S.raw[0].constructor; const all=new Ctor(np*n); const fr=[];
+  for(let f=0;f<n;f++){const d=all.subarray(f*np,(f+1)*np);d.set(S.raw[f]);fr.push(d);}
+  const removed=Array.from({length:n},()=>[]); let nT=0,nS=0;
+  let lo=Infinity,hi=-Infinity; for(let f=0;f<n;f+=Math.max(1,n>>4)){const a=S.raw[f];for(let i=0;i<np;i+=7){const v=a[i];if(v<lo)lo=v;if(v>hi)hi=v;}}
+  const rnd=(m)=>Math.floor(Math.random()*m);
+  if(opt.temporal&&n>=3){
+    overlay(true,"Spot removal: estimating temporal noise…",0);await tick();
+    const smp=[];for(let s=0;s<200000;s++){const f=rnd(n),i=rnd(np);const b=tBase(S.raw,f,i);smp.push([b,S.raw[f][i]-b]);}
+    const sig=lut(noiseModel(smp),lo,hi); const k=opt.k, kg=opt.k*0.5;
+    for(let f=0;f<n;f++){
+      const src=S.raw[f],dst=fr[f],hit=[];
+      for(let i=0;i<np;i++){const v=src[i];if(v<=lo)continue;const b=tBase(S.raw,f,i);if(v-b>k*sig(b))hit.push(i);}
+      const mark=new Set(hit);
+      if(opt.grow){const w=S.w;for(const i of hit){const x=i%w,y=(i/w)|0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const xx=x+dx,yy=y+dy;if(xx<0||yy<0||xx>=w||yy>=S.h)continue;const j=yy*w+xx;if(mark.has(j))continue;const b=tBase(S.raw,f,j);if(src[j]-b>kg*sig(b))mark.add(j);}}}
+      for(const i of mark){dst[i]=tBase(S.raw,f,i);removed[f].push(i);} nT+=mark.size;
+      if(f%8===0){overlay(true,"Spot removal: temporal filter…",(f+1)/n*(opt.spatial?.5:1));await tick();}
+    }
+  }
+  if(opt.spatial){
+    overlay(true,"Spot removal: estimating spatial noise…",opt.temporal?.5:0);await tick();
+    const smp=[];for(let s=0;s<120000;s++){const f=rnd(n),i=rnd(np);const b=sBase(fr[f],i);smp.push([b,fr[f][i]-b]);}
+    const sig=lut(noiseModel(smp),lo,hi); const k=opt.k, kg=opt.k*0.5, w=S.w;
+    for(let f=0;f<n;f++){
+      const a=fr[f]; const orig=a.slice(); const hit=[];
+      for(let y=0;y<S.h;y++){const ym=y?y-1:0,yp=y<S.h-1?y+1:y;for(let x=0;x<w;x++){const i=y*w+x,v=orig[i];
+        // quick pre-check against the mean of the 8 neighbours, exact median test only for candidates
+        const xm=x?x-1:0,xp=x<w-1?x+1:x;const m=(orig[ym*w+xm]+orig[ym*w+x]+orig[ym*w+xp]+orig[y*w+xm]+orig[y*w+xp]+orig[yp*w+xm]+orig[yp*w+x]+orig[yp*w+xp])/8;
+        if(v-m<=0.3*k*sig(m))continue; const b=sBase(orig,i); if(v-b>k*sig(b))hit.push(i);}}
+      const mark=new Set(hit);
+      if(opt.grow){for(const i of hit){const x=i%w,y=(i/w)|0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const xx=x+dx,yy=y+dy;if(xx<0||yy<0||xx>=w||yy>=S.h)continue;const j=yy*w+xx;if(mark.has(j))continue;const b=sBase(orig,j);if(orig[j]-b>kg*sig(b))mark.add(j);}}}
+      // replace with the median of neighbours that are not themselves marked
+      for(const i of mark){const x=i%w,y=(i/w)|0;const vals=[];for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const xx=x+dx,yy=y+dy;if(xx<0||yy<0||xx>=w||yy>=S.h)continue;const j=yy*w+xx;if(!mark.has(j))vals.push(orig[j]);}
+        vals.sort((p,q)=>p-q);a[i]=vals.length?vals[vals.length>>1]:sBase(orig,i);removed[f].push(i);}
+      nS+=mark.size;
+      if(f%8===0){overlay(true,"Spot removal: spatial filter…",(opt.temporal?.5:0)+(f+1)/n*(opt.temporal?.5:1));await tick();}
+    }
+  }
+  S.frames=fr; S.removed=removed.map(r=>Int32Array.from(new Set(r)));
+  const tot=S.removed.reduce((s,r)=>s+r.length,0);
+  S.cleanInfo={...opt,nT,nS,tot,frac:tot/(np*n)};
+  $("spotStat").textContent=`${tot.toLocaleString()} px replaced (${(100*tot/(np*n)).toFixed(3)}%)`+(opt.temporal&&opt.spatial?` · temporal ${nT.toLocaleString()}, spatial ${nS.toLocaleString()}`:"")+` · ${((performance.now()-t0)/1000).toFixed(1)} s`;
+  $("btnSpotUndo").disabled=false;
+  afterDataChange(); overlay(false);
+}
+// Fiji / ImageJ  Process › Filters › Median 3D…  (X radius 0, Y radius 0, Z radius 1.0)
+// ij.process.StackProcessor.filter3D: ellipsoidal kernel → {t−1, t, t+1}; voxels outside the stack are skipped
+// (edge frames: 2 values → ArrayUtil.medianSort returns their mean); 8/16-bit results are clamped and rounded (value+0.5).
+async function median3dZ1(){
+  if(!S.n)return; const np=S.w*S.h,n=S.n,t0=performance.now(),R=S.raw;
+  const Ctor=R[0].constructor; const all=new Ctor(np*n); const fr=[];
+  const isInt=!(all instanceof Float32Array||all instanceof Float64Array);
+  const maxV=all instanceof Uint8Array?255:all instanceof Uint16Array?65535:all instanceof Int16Array?32767:Infinity, minV=all instanceof Int16Array?-32768:(isInt?0:-Infinity);
+  const put=(d,i,v)=>{if(isInt){v=v>maxV?maxV:v<minV?minV:v;d[i]=Math.floor(v+0.5);}else d[i]=v;};
+  overlay(true,"Median 3D (X 0, Y 0, Z 1)…",0);await tick();
+  for(let t=0;t<n;t++){
+    const d=all.subarray(t*np,(t+1)*np); fr.push(d); const b=R[t];
+    if(n===1){d.set(b);continue;}
+    if(t===0||t===n-1){const o=R[t===0?1:n-2];for(let i=0;i<np;i++)put(d,i,0.5*(b[i]+o[i]));}
+    else{const a=R[t-1],c=R[t+1];for(let i=0;i<np;i++){const x=a[i],y=b[i],z=c[i];
+      const lo=x<y?x:y,hi=x<y?y:x; put(d,i, z<lo?lo:z>hi?hi:z);}}
+    if(t%16===0){overlay(true,"Median 3D (X 0, Y 0, Z 1)…",(t+1)/n*0.85);await tick();}
+  }
+  // statistics + pixels strongly lowered (for "Mark removed")
+  let changed=0; for(let t=0;t<n;t++){const a=R[t],d=fr[t];for(let i=0;i<np;i++){if(a[i]!==d[i])changed++;}}
+  // noise level as a function of intensity (same robust model as the adaptive method), for marking strong spots only
+  let lo=Infinity,hi=-Infinity; for(let t=0;t<n;t+=Math.max(1,n>>4)){const a=R[t];for(let i=0;i<np;i+=7){const v=a[i];if(v<lo)lo=v;if(v>hi)hi=v;}}
+  const smp=[]; for(let s=0;s<200000;s++){const t=(Math.random()*n)|0,i=(Math.random()*np)|0;const b=tBase(R,t,i);smp.push([b,R[t][i]-b]);}
+  const sig=lut(noiseModel(smp),lo,hi);
+  const removed=[]; let strong=0;
+  for(let t=0;t<n;t++){const a=R[t],d=fr[t],hit=[];for(let i=0;i<np;i++){const df=a[i]-d[i];if(df>0&&df>6*sig(d[i]))hit.push(i);}removed.push(Int32Array.from(hit));strong+=hit.length;}
+  S.frames=fr; S.removed=removed; S.cleanInfo={method:"median3d",changed,strong};
+  $("spotStat").textContent=`Median 3D (X0 Y0 Z1) applied · ${changed.toLocaleString()} px changed (${(100*changed/(np*n)).toFixed(1)}%) · ${strong.toLocaleString()} strong spots · ${((performance.now()-t0)/1000).toFixed(1)} s`;
+  $("btnSpotUndo").disabled=false; afterDataChange(); overlay(false);
+}
+// Fiji / ImageJ  Process › Noise › Remove Outliers…  (ij.plugin.filter.RankFilters, OUTLIERS)
+// circular kernel from RankFilters.makeLineRadii; out-of-image pixels = nearest edge pixel;
+// bright: replace by median if  v − median > threshold ;  dark: if  median − v > threshold. Each frame filtered in 2D from its original values.
+function rankKernel(radius){
+  if(radius>=1.5&&radius<1.75)radius=1.75; else if(radius>=2.5&&radius<2.85)radius=2.85;
+  const r2=Math.floor(radius*radius)+1, kR=Math.floor(Math.sqrt(r2+1e-10)); const pts=[];
+  for(let y=-kR;y<=kR;y++){const dx=y===0?kR:Math.floor(Math.sqrt(r2-y*y+1e-10));for(let x=-dx;x<=dx;x++)pts.push([x,y]);}
+  return {pts,kR};
+}
+function nth(a,n,k){ // k-th smallest of a[0..n) (in place, quickselect)
+  let l=0,r=n-1;
+  while(r>l){const piv=a[(l+r)>>1];let i=l,j=r;
+    while(i<=j){while(a[i]<piv)i++;while(a[j]>piv)j--;if(i<=j){const t=a[i];a[i]=a[j];a[j]=t;i++;j--;}}
+    if(k<=j)r=j;else if(k>=i)l=i;else return a[k];}
+  return a[k];
+}
+async function removeOutliersFiji(radius,thr,which){
+  if(!S.n)return; const w=S.w,h=S.h,np=w*h,n=S.n,t0=performance.now(),R=S.raw;
+  const {pts,kR}=rankKernel(radius); const K=pts.length, half=K>>1; const offs=Int32Array.from(pts.map(([x,y])=>y*w+x));
+  const kx=Int32Array.from(pts.map(p=>p[0])), ky=Int32Array.from(pts.map(p=>p[1]));
+  const Ctor=R[0].constructor; const all=new Ctor(np*n); const fr=[]; const removed=[]; let tot=0;
+  const buf=new Float64Array(K); const bright=which!=="dark";
+  overlay(true,"Remove Outliers (radius "+radius+", threshold "+thr+", "+which+")…",0);await tick();
+  for(let t=0;t<n;t++){
+    const src=R[t], dst=all.subarray(t*np,(t+1)*np); dst.set(src); fr.push(dst); const hit=[];
+    for(let y=0;y<h;y++){const inY=y>=kR&&y<h-kR;
+      for(let x=0;x<w;x++){const i=y*w+x,v=src[i]; const inner=inY&&x>=kR&&x<w-kR;
+        // quick rejection: the median cannot be beyond the threshold once more than half the kernel is on the other side
+        const lim=bright?v-thr:v+thr; let keep=0,k;
+        for(k=0;k<K;k++){const u=inner?src[i+offs[k]]:src[Math.min(h-1,Math.max(0,y+ky[k]))*w+Math.min(w-1,Math.max(0,x+kx[k]))];
+          buf[k]=u; if(bright?u>=lim:u<=lim){if(++keep>half)break;}}
+        if(k<K)continue;
+        const med=nth(buf,K,half);
+        if(bright? v-thr>med : v+thr<med){dst[i]=med;hit.push(i);}
+      }}
+    removed.push(Int32Array.from(hit)); tot+=hit.length;
+    if(t%8===0){overlay(true,"Remove Outliers (radius "+radius+", threshold "+thr+", "+which+")…",(t+1)/n);await tick();}
+  }
+  S.frames=fr; S.removed=removed; S.cleanInfo={method:"outliers",radius,thr,which,tot};
+  $("spotStat").textContent=`Remove Outliers (r ${radius}, thr ${thr}, ${which}; kernel ${K} px) · ${tot.toLocaleString()} px replaced (${(100*tot/(np*n)).toFixed(3)}%) · ${((performance.now()-t0)/1000).toFixed(1)} s`;
+  $("btnSpotUndo").disabled=false; afterDataChange(); overlay(false);
+}
+function frameNoise(){ // robust noise σ of a single frame, from differences of consecutive frames
+  if(!S.n||S.n<2)return null; const np=S.w*S.h,d=[];
+  for(let s=0;s<60000;s++){const t=(Math.random()*(S.n-1))|0,i=(Math.random()*np)|0;d.push(Math.abs(S.raw[t+1][i]-S.raw[t][i]));}
+  d.sort((a,b)=>a-b); return 1.4826*d[d.length>>1]/Math.SQRT2;
+}
+function updateOlHint(){const sg=frameNoise();$("olHint").textContent=sg?`(noise σ ≈ ${sg.toPrecision(3)}; e.g. 5σ ≈ ${(5*sg).toPrecision(3)})`:"";}
+function syncSpotUI(){const m=$("spMethod").value;$("spAdaptive").style.display=m==="adaptive"?"contents":"none";$("spMedInfo").style.display=m==="median3d"?"":"none";$("spOutl").style.display=m==="outliers"?"contents":"none";if(m==="outliers")updateOlHint();}
+$("spMethod").onchange=syncSpotUI; syncSpotUI();
+function undoSpots(){S.frames=S.raw;S.removed=null;S.cleanInfo=null;$("spotStat").textContent="Original data";$("btnSpotUndo").disabled=true;afterDataChange();}
+function afterDataChange(){computeProjections();autoContrast();render(true);measureAll();updateTable();}
+$("btnSpot").onclick=()=>{if(!S.n)return; if($("spMethod").value==="median3d"){median3dZ1();return;}
+  if($("spMethod").value==="outliers"){const r=+$("olR").value,t=+$("olT").value;if(!(r>=0.5&&r<=25)){flash("Radius must be between 0.5 and 25 px.");return;}if(!(t>=0)){flash("Threshold must be ≥ 0.");return;}removeOutliersFiji(r,t,$("olW").value);return;} const opt={temporal:$("spT").checked,spatial:$("spS").checked,k:Math.max(2,+$("spK").value||6),grow:$("spG").checked};
+  if(!opt.temporal&&!opt.spatial){flash("Tick Temporal and/or Spatial first.");return;}removeSpots(opt);};
+$("btnSpotUndo").onclick=undoSpots;
+$("spMark").onchange=()=>render(false);
+["sbOn","sbLen","sbPos","sbCol","sbLbl"].forEach(id=>{$(id).addEventListener("input",()=>render(false));$(id).addEventListener("change",()=>render(false));});
+$("pxsize").addEventListener("change",()=>render(false));
+
+// ---------- Init ----------
+setTool("rect"); updateTable();
+requestAnimationFrame(()=>{resizeCanvas();updatePlot();setPxSource(false);$("pxSrc").textContent="";});
+</script>
+</body>
+</html>
