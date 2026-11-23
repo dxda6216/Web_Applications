@@ -358,6 +358,7 @@ textarea[readonly]{background:var(--bg)}
           </div>
           <div class="row" style="margin-top:6px">
             <button type="button" id="seriesExample2" title="A record every 8 minutes with the date and time (ISO 8601) in column 1, and its own schedule: LD 12:12, LL, LD 11.5:11.5, DD">Example 2 (date/time)</button>
+            <button type="button" id="seriesExample3" title="A record every 15 minutes (hours in column 1): under LD 12:12 the rhythm drifts about 0.45 h later every day; on release into LL it is delayed by about 1 h and then free-runs. Shows the LD regression (phase on the last LD day and the day after).">Example 3 (drift in LD)</button>
             <button type="button" id="seriesClearData">Clear data</button>
             <button type="button" id="seriesClearAll">Clear all</button>
           </div>
@@ -550,9 +551,10 @@ textarea[readonly]{background:var(--bg)}
           <option value="zero">0 h of the data</option>
           <option value="day0">Actogram day 0, 0 h</option>
         </select>
-        <label class="chk"><input type="checkbox" id="draw_fit">Draw fitted lines (LD: mean phase, dotted black; LL/DD: regression)</label>
+        <label class="chk"><input type="checkbox" id="draw_fit">Draw fitted lines (LD: mean phase, dotted black, and regression, dashed; LL/DD: regression)</label>
+        <label class="chk"><input type="checkbox" id="ld_fit">LD: also fit a regression line (phase on the last LD day and the day after)</label>
       </div>
-      <p class="hint"><b>LD:</b> phase = ZT ÷ (L + D) × 360°, with ZT0 at light-on (circular mean of the selected points). <b>LL/DD:</b> the event time t (h after the 0° reference) is fitted as t = b + τ·n, where n is the cycle number (cycle 0 begins at the reference); the slope τ is the free-running period and the phase is (b mod τ) ÷ τ × 360°.</p>
+      <p class="hint"><b>LD:</b> phase = ZT ÷ (L + D) × 360°, with ZT0 at light-on (circular mean of the selected points). With the regression option, the event time t (h after the first light-on) is also fitted as t = b + s·n (n = LD cycle number); the fitted ZT on cycle n, b + s·n − n·(L + D), gives the phase on the last LD day and, extrapolated, on the day after (e.g. day 1 of DD). <b>LL/DD:</b> the event time t (h after the 0° reference) is fitted as t = b + τ·n, where n is the cycle number (cycle 0 begins at the reference); the slope τ is the free-running period and the phase is (b mod τ) ÷ τ × 360°.</p>
       </div>
       <h3 style="margin-top:14px">Phase results</h3>
       <p class="info" id="anaNote"></p>
@@ -1804,6 +1806,98 @@ const example2Settings = () => ({
           {mode:'DD', L:'12:00', D:'12:00', start:'2026-11-13 19:37', phase:'Light'}, blankCycle(), blankCycle()],
   placed:'2026-10-28 13:50', origin:'lights_on', origin_time:'', period:DEFAULT_PERIOD, rows_auto:true, title:'Example 2',
   sel_peaks:[], sel_troughs:[], input_mode:'series'});
+// Example 3: a rhythm that slowly drifts later under LD and is shifted on release into LL, to show the LD regression.
+// Synthetic record every 15 min (column 1 = hours after 0 h): under LD 12:12 the peaks fall at ZT 6.5 + 0.45*n
+// (n = LD cycle), i.e. the rhythm delays by about 0.45 h every day instead of keeping a fixed ZT, while the peaks
+// stay in the light (ZT 6.5 -> 9.7) and the troughs in the dark (ZT 18.7 -> 21.9).  The mean ZT of the LD days
+// lies near the middle of that drift; the regression gives the phase reached on the last LD day (peak about
+// ZT 9.7) and, extrapolated, on the first day in LL (about ZT 10.1).  From the light-on of the 9th day (192 h)
+// the light stays on (LL): the light in the early subjective night of that first LL day delays the rhythm by
+// about 1 h (built up between ZT 12 and ZT 18), after which it free-runs with a slightly longer tau of about 24.9 h, so the LL
+// regression lies about 1 h later than the LD extrapolation.  Bioluminescence-like trend: a decaying
+// baseline, a slowly decaying amplitude and a little noise.  Only the signal is stored: the times are
+// 0, 0.25, 0.5, ... h (example3SeriesText).
+const EXAMPLE3_DATA = '3751 3898 4061 4201 4372 4530 4676 4828 4957 5107 5238 5368 5479 5588 5720 5825 5894 5992 6075 ' +
+  '6129 6188 6232 6256 6284 6311 6323 6293 6288 6276 6218 6179 6112 6060 5995 5888 5792 5686 5588 ' +
+  '5467 5325 5216 5067 4933 4785 4617 4480 4313 4143 3973 3814 3636 3483 3303 3140 2989 2836 2673 ' +
+  '2523 2369 2227 2092 1960 1831 1709 1596 1498 1409 1319 1252 1169 1115 1067 1034 1000 968 970 967 ' +
+  '985 1003 1035 1079 1126 1177 1250 1323 1406 1503 1594 1717 1810 1919 2064 2185 2315 2467 2594 ' +
+  '2747 2888 3026 3167 3311 3469 3599 3754 3884 4010 4154 4273 4396 4525 4632 4728 4841 4925 5008 ' +
+  '5089 5168 5223 5275 5325 5331 5362 5384 5393 5377 5362 5336 5307 5258 5204 5145 5080 5013 4916 ' +
+  '4826 4724 4627 4486 4380 4263 4137 3996 3849 3720 3557 3425 3271 3117 2970 2823 2674 2525 2372 ' +
+  '2237 2092 1951 1822 1692 1565 1452 1341 1235 1141 1046 961 888 831 772 715 680 652 617 605 606 ' +
+  '609 616 632 674 713 755 817 879 947 1027 1114 1204 1308 1406 1525 1643 1762 1882 2002 2129 2266 ' +
+  '2400 2531 2671 2788 2923 3061 3179 3318 3436 3568 3693 3785 3904 4002 4092 4191 4270 4363 4430 ' +
+  '4474 4545 4584 4616 4669 4672 4679 4690 4670 4666 4651 4605 4566 4525 4476 4392 4317 4258 4169 ' +
+  '4079 3986 3874 3772 3637 3533 3406 3281 3165 3025 2881 2755 2616 2490 2346 2221 2086 1953 1825 ' +
+  '1697 1571 1450 1330 1227 1113 1032 933 846 774 694 629 567 516 480 441 419 394 379 384 403 402 ' +
+  '427 449 498 539 601 659 728 794 883 977 1066 1165 1267 1371 1477 1581 1715 1827 1936 2065 2186 ' +
+  '2314 2437 2555 2682 2797 2910 3032 3136 3242 3342 3450 3530 3619 3705 3787 3851 3910 3960 4005 ' +
+  '4054 4086 4111 4127 4137 4151 4148 4134 4095 4080 4043 4000 3950 3887 3830 3756 3677 3585 3481 ' +
+  '3410 3300 3198 3095 2980 2878 2766 2635 2510 2384 2262 2139 2022 1891 1775 1655 1541 1425 1329 ' +
+  '1212 1108 1012 920 836 747 666 597 525 476 426 378 343 323 296 276 280 270 283 306 320 346 392 ' +
+  '436 494 543 604 675 750 831 921 1009 1107 1191 1306 1412 1507 1617 1744 1835 1955 2072 2182 2286 ' +
+  '2401 2508 2615 2723 2813 2921 2998 3098 3184 3264 3329 3412 3448 3523 3571 3606 3644 3673 3703 ' +
+  '3717 3733 3722 3718 3726 3682 3660 3634 3589 3536 3472 3437 3356 3289 3203 3122 3043 2957 2862 ' +
+  '2761 2655 2545 2459 2339 2244 2124 2014 1893 1789 1688 1570 1457 1351 1258 1149 1052 968 876 793 ' +
+  '721 645 582 509 461 399 356 320 291 264 256 235 227 230 237 258 284 308 344 388 443 495 546 626 ' +
+  '684 758 847 921 1012 1102 1204 1283 1382 1488 1588 1701 1791 1897 1992 2103 2199 2297 2408 2493 ' +
+  '2587 2665 2765 2838 2905 2988 3052 3103 3166 3225 3271 3295 3320 3354 3390 3403 3395 3399 3398 ' +
+  '3380 3360 3345 3296 3260 3202 3163 3105 3068 2983 2923 2840 2768 2686 2587 2507 2413 2322 2220 ' +
+  '2129 2026 1931 1833 1732 1621 1519 1428 1331 1231 1146 1050 969 892 801 716 656 589 533 479 421 ' +
+  '382 343 309 286 260 252 235 237 238 250 261 287 317 348 386 434 488 542 599 669 738 814 883 967 ' +
+  '1054 1140 1223 1314 1394 1499 1587 1688 1770 1881 1966 2049 2133 2243 2309 2399 2480 2558 2626 ' +
+  '2699 2750 2829 2890 2933 2983 3018 3038 3075 3101 3115 3129 3117 3132 3124 3122 3097 3075 3045 ' +
+  '3018 2968 2917 2873 2801 2750 2684 2616 2550 2469 2410 2300 2225 2150 2056 1967 1863 1785 1694 ' +
+  '1594 1506 1414 1340 1233 1155 1071 995 908 846 770 698 628 584 525 478 424 393 357 336 309 290 ' +
+  '275 270 271 274 284 297 330 351 384 424 455 507 561 618 675 739 806 875 950 1031 1114 1187 1266 ' +
+  '1353 1444 1526 1609 1693 1773 1866 1954 2029 2109 2193 2252 2337 2407 2485 2537 2592 2650 2692 ' +
+  '2753 2786 2801 2841 2882 2896 2909 2922 2916 2923 2922 2911 2874 2847 2840 2803 2766 2712 2670 ' +
+  '2621 2563 2496 2439 2379 2304 2248 2157 2079 2011 1918 1839 1748 1674 1592 1509 1424 1343 1264 ' +
+  '1175 1104 1037 967 896 819 765 708 645 593 539 502 464 422 403 373 350 334 334 323 324 327 336 ' +
+  '349 372 398 434 457 503 549 601 646 705 775 827 886 950 1024 1095 1161 1243 1305 1384 1456 1532 ' +
+  '1615 1689 1777 1843 1908 1981 2051 2114 2177 2225 2288 2362 2406 2457 2493 2531 2572 2608 2619 ' +
+  '2654 2669 2683 2685 2697 2695 2689 2688 2662 2663 2635 2608 2577 2546 2498 2469 2437 2398 2346 ' +
+  '2310 2272 2222 2170 2128 2074 2023 1979 1927 1874 1826 1771 1717 1656 1595 1532 1464 1398 1332 ' +
+  '1254 1188 1140 1060 1008 946 890 835 794 748 701 665 625 587 558 527 515 487 479 470 466 473 470 ' +
+  '488 493 506 529 554 575 608 637 684 716 773 810 859 920 969 1025 1081 1139 1205 1258 1335 1401 ' +
+  '1451 1517 1585 1645 1712 1779 1822 1899 1922 1989 2031 2122 2138 2185 2232 2269 2309 2338 2377 ' +
+  '2389 2406 2430 2449 2457 2471 2459 2458 2475 2460 2441 2409 2396 2381 2348 2324 2289 2251 2221 ' +
+  '2176 2125 2084 2019 1991 1929 1866 1809 1755 1710 1649 1591 1523 1470 1424 1344 1300 1241 1177 ' +
+  '1123 1080 1032 984 941 895 845 816 772 750 708 687 667 640 633 617 611 599 593 604 613 607 624 ' +
+  '636 659 674 698 733 763 794 831 872 902 944 995 1038 1101 1141 1186 1253 1302 1337 1403 1448 ' +
+  '1507 1564 1613 1652 1709 1772 1816 1866 1899 1959 1983 2022 2056 2094 2139 2160 2178 2213 2231 ' +
+  '2246 2261 2268 2284 2287 2294 2276 2269 2260 2254 2247 2215 2203 2170 2148 2110 2093 2062 2013 ' +
+  '1974 1949 1911 1855 1814 1769 1720 1680 1624 1571 1514 1472 1417 1384 1329 1279 1236 1190 1147 ' +
+  '1085 1064 1019 977 949 906 880 854 833 801 772 769 757 735 730 708 707 727 725 723 730 750 755 ' +
+  '772 783 814 837 861 894 922 958 987 1024 1064 1101 1143 1195 1233 1281 1311 1353 1414 1445 1493 ' +
+  '1542 1587 1633 1659 1713 1744 1786 1832 1851 1904 1928 1967 1988 2017 2039 2053 2078 2092 2091 ' +
+  '2117 2120 2123 2139 2129 2122 2125 2108 2102 2092 2081 2057 2045 2013 1982 1947 1926 1898 1865 ' +
+  '1827 1803 1756 1725 1693 1636 1604 1558 1523 1478 1433 1400 1355 1311 1279 1238 1196 1157 1136 ' +
+  '1087 1057 1032 1003 974 942 923 897 879 878 839 837 835 826 812 814 812 823 834 825 841 857 873 ' +
+  '889 907 922 944 984 1003 1026 1073 1088 1120 1160 1183 1231 1268 1306 1339 1370 1413 1452 1481 ' +
+  '1528 1555 1600 1636 1667 1697 1721 1768 1797 1831 1847 1880 1897 1917 1929 1958 1964 1968 1983 ' +
+  '2002 2004 2009 2001 2011 2006 2001 1998 1981 1972 1961 1940 1911 1900 1886 1847 1837 1808 1775 ' +
+  '1737 1728 1697 1655 1605 1584 1559 1508 1485 1434 1420 1380 1358 1304 1279 1233 1220 1180 1156 ' +
+  '1121 1108 1075 1045 1023 1017 979 965 951 932 924 915 914 920 907 902 905 908 914 927 929 941 ' +
+  '961 960 981 1008 1022 1043 1069 1088 1122 1152 1175 1195 1227 1257 1293 1322 1351 1396 1411 1449 ' +
+  '1487 1523 1538 1575 1600 1627 1666 1697 1713 1740 1765 1784 1803 1811 1825 1860 1863 1873 1888 ' +
+  '1895 1888 1899 1898 1910 1905 1907 1887 1886 1882 1868 1857 1835 1825 1805 1793 1778 1754 1718 ' +
+  '1694 1678 1644 1618 1604 1569 1553 1511 1479 1450 1420 1408 1358 1338 1302 1277 1256 1237 1199 ' +
+  '1191 1156 1135 1108 1082 1073 1052 1046 1029 1014 1002 1000 993 985 974 975 975 972 990 985 999 ' +
+  '1017 1019 1026 1028 1058 1057 1084 1112 1132 1144 1176 1187 1217 1238 1271 1286 1311 1343 1369 ' +
+  '1393 1425 1437 1480 1510 1522 1555 1569 ';
+const EXAMPLE3_STEP_H = 0.25;                     // one row every 15 minutes
+const EXAMPLE3_ORDER = '161';                     // sinc filter order: 161 samples x 15 min = 40 h, as in example 2
+// Example 3 as 'hours<TAB>signal' rows.
+const example3SeriesText = () => EXAMPLE3_DATA.trim().split(/\s+/).map((v, i) => `${(i*EXAMPLE3_STEP_H).toFixed(2)}\t${v}`).join('\n');
+// The settings of example 3: 0 h = 2026-11-02 08:00 (light-on); LD 12:12 for 8 days -> LL (light stays on from 192 h).
+const example3Settings = () => ({
+  t0:'2026-11-02 08:00', tz:DEFAULT_TZ, peaks:'', troughs:'', show_ld:true, extend_before:false, n_changes:1,
+  cycles:[{mode:'LD', L:'12:00', D:'12:00', start:'2026-11-02 08:00', phase:'Light'},
+          {mode:'LL', L:'12:00', D:'12:00', start:'2026-11-10 08:00', phase:'Light'}, blankCycle(), blankCycle(), blankCycle(), blankCycle()],
+  placed:'2026-11-02 07:30', origin:'lights_on', origin_time:'', period:DEFAULT_PERIOD, rows_auto:true, title:'Example 3',
+  sel_peaks:[], sel_troughs:[], input_mode:'series'});
 // example bioluminescence record (time in h, signal), as pairs
 // Example 1: 'time value' pairs, one long string.
 const EXAMPLE_SERIES_DATA = '0.00 846 0.82 1116 1.65 1447 2.46 1794 3.29 2121 4.13 2392 4.98 2710 5.82 2921 6.65 3086 7.47 ' +
@@ -1902,7 +1996,7 @@ function defaultSettings(){
   // the example plus all display options and the time-series options
   return {...exampleSettings(), plot:'double', rowlab:'number', show_values:false, link_peak:false, link_trough:false,
           row_min:0, row_max:5, label_onsets:false, label_row_starts:false, mark_times:true, mark_changes:true, x_major:X_MAJOR[3], x_minor:X_MINOR[0], light_color:LIGHT_COLORS[0][1], dark_color:DARK_COLORS[0][1],
-          phase_ref:'zt0_prev', draw_fit:true, drag_mode:'select', sel_target:'both',
+          phase_ref:'zt0_prev', draw_fit:true, ld_fit:true, drag_mode:'select', sel_target:'both',
           series:'', ts_edits:emptyEdits(), ...TS_DEFAULTS, ts_draw:'none', ts_draw_data:'raw', ts_draw_scale:'all', show_points:true, clock_mode:'local'};
 }
 // Validate a settings object (from storage, a file or the desktop app) and fill in defaults, so the rest of the code
@@ -1945,6 +2039,7 @@ function normalise(s){
   for(const k of ['sel_peaks','sel_troughs']) d[k] = (Array.isArray(d[k]) ? d[k] : []).map(Number).filter(Number.isFinite);
   if(!['zt0_prev','start','zero','day0'].includes(d.phase_ref)) d.phase_ref = 'zt0_prev';
   d.draw_fit = d.draw_fit !== false;
+  d.ld_fit = d.ld_fit !== false;
   if(!['select','deselect'].includes(d.drag_mode)) d.drag_mode = 'select';
   if(!['both','peaks','troughs'].includes(d.sel_target)) d.sel_target = 'both';
   // time-series input and its options, validated
@@ -2220,6 +2315,54 @@ function circMean(degs){
   // mean direction 0-360 deg; circular SD = sqrt(-2 ln r) in degrees
   return {mean:((Math.atan2(s, c)*180/Math.PI) + 360) % 360, sd: r > 0 ? Math.sqrt(-2*Math.log(Math.min(1, r)))*180/Math.PI : NaN, r};
 }
+// ---- LD regression: phase on the last LD day and on the day after ----
+// Besides the circular mean of the ZTs, the phase under LD can be estimated from a straight line fitted
+// through the event times, as is done for LL/DD.  This follows a rhythm that is still drifting (for example
+// while it re-entrains after a shift of the light/dark cycle) and gives its fitted phase on the last day
+// (cycle) of the LD condition and, extrapolated, on the day after it (usually the first day of the next
+// condition, e.g. the first day in DD: the usual way to read the phase reached under LD).
+//   g      : the result group of one LD condition and one kind (gets g.ldFit or g.ldFitNote)
+//   ev     : its events, sorted by time (each gets e.fc = cycle number used in the fit, e.resid = residual)
+//   P      : L + D, the length of one LD cycle (h);  on : the first light-on of the condition (h after 0 h)
+//   to     : the start of the next condition (h), or Infinity for the last condition
+//   dataEnd: the latest peak/trough time in the lists (used as 'last day' when the condition never ends)
+// Model: t = b + s*n, where t = time after the first light-on (h) and n = cycle number (cycle n begins at the
+// light-on on + n*P).  The slope s is the period of the rhythm (h per cycle; s = P when it is entrained, and
+// s - P is the drift per cycle).  The fitted ZT on cycle n is b + s*n - n*P.
+function ldRegression(g, ev, P, on, to, dataEnd){
+  // cycle numbers: the light-on cycle of the first point, then +1 per period between points (at least +1),
+  // so a rhythm drifting across light-on (ZT 23.8 -> ZT 0.3) is not torn apart by the change of cycle
+  let n = Math.floor((ev[0].h - on)/P + 1e-9);
+  ev.forEach((e, k) => { if(k) n += Math.max(1, Math.round((e.h - ev[k-1].h)/P)); e.fc = n; });
+  if(ev.length < 2){ g.ldFitNote = 'needs at least 2 points'; return; }
+  // least squares through (n, t)
+  const N = ev.length, xs = ev.map(e => e.fc), ys = ev.map(e => e.h - on);
+  const mx = xs.reduce((a, b) => a + b)/N, my = ys.reduce((a, b) => a + b)/N;
+  let sxx = 0, sxy = 0, syy = 0; xs.forEach((x, k) => { sxx += (x-mx)**2; sxy += (x-mx)*(ys[k]-my); syy += (ys[k]-my)**2; });
+  if(!(sxx > 0)){ g.ldFitNote = 'all points in one cycle'; return; }
+  // slope s (h per cycle) and intercept b (fitted t of cycle 0)
+  const s = sxy/sxx, b = my - s*mx;
+  // residuals, residual variance, SE of the slope, R^2
+  const ssr = ys.reduce((a, y, k) => a + (y - (b + s*xs[k]))**2, 0);
+  const v = N > 2 ? ssr/(N - 2) : NaN;
+  ev.forEach(e => { e.resid = (e.h - on) - (b + s*e.fc); });
+  // the last LD day: the last cycle whose light-on falls before the next condition starts; for the last
+  // condition (no end), the cycle of the latest peak/trough in the data
+  const nLast = Number.isFinite(to) ? Math.ceil((to - on)/P - 1e-9) - 1 : Math.floor((dataEnd - on)/P + 1e-9);
+  // The fitted event of day (LD cycle) nn: the event of the line that falls between the light-on of that day
+  // (on + nn*P) and the next light-on.  It is found by starting from fit cycle k = nn and stepping k by one
+  // cycle while the fitted time lies before/after that day (an event drifting past ZT 24 belongs to the next
+  // day).  Returned: day nn, fit cycle k, light-on of the day, fitted time h (h after 0 h), ZT within the
+  // day (0..P), phase (deg) and the SE of the fitted value (standard error of the regression line at k:
+  // sqrt(v*(1/N + (k - mean n)^2/Sxx))).
+  const at = nn => {
+    let k = nn;
+    for(let it = 0; it < 6; it++){ const d = Math.floor((b + s*k - nn*P)/P); if(!d) break; k -= d; }
+    const t = b + s*k, zt = (((t - nn*P) % P) + P) % P;
+    return {n:nn, k, onH:on + nn*P, h:on + t, zt, deg:zt/P*360, se: Math.sqrt(v*(1/N + (k - mx)**2/sxx))}; };
+  g.ldFit = {slope:s, slopeSe:Math.sqrt(v/sxx), r2: syy > 0 ? 1 - ssr/syy : 1, b, n0:Math.min(...xs), n1:Math.max(...xs),
+             last:at(nLast), next:at(nLast + 1), open:!Number.isFinite(to)};
+}
 // selected peaks/troughs -> phase per condition (LD: ZT; LL/DD: regression of time on cycle number)
 function analyze(S, res){
   // result: one group per condition and kind, all selected events, notes
@@ -2227,8 +2370,10 @@ function analyze(S, res){
   const sel = selectedSets(S);
   const events = [];
   // 1. every selected value of the two lists becomes an event {kind, h}
+  // dataEnd: the latest peak or trough of the lists (selected or not), for the LD regression's 'last day'
+  let dataEnd = -Infinity;
   for(const [kind, vals, set] of [['Peak', parseList(S.peaks).vals, sel.p], ['Trough', parseList(S.troughs).vals, sel.t]])
-    for(const h of vals) if(set.has(k4(h))) events.push({kind, h});
+    for(const h of vals){ dataEnd = Math.max(dataEnd, h); if(set.has(k4(h))) events.push({kind, h}); }
   out.events = events.sort((a, b) => a.h - b.h);
   if(!events.length){ out.note = 'Select peaks or troughs in the actogram to analyse their phase.'; return out; }
   if(!res.ld){ out.note = 'Set valid light/dark conditions (and the clock time of 0 h) to analyse phases.'; return out; }
@@ -2259,6 +2404,10 @@ function analyze(S, res){
         // mean phase in degrees and in hours (mean ZT), spread, and the time range of the condition
         Object.assign(g, {period:P, phaseDeg:cm.mean, phaseH:cm.mean/360*P, sd:cm.sd, r:cm.r, ref:'light-on (ZT0)', on,
           from:(i === 0 && res.ld.extendBefore) ? -Infinity : s.startHour, to:i + 1 < segs.length ? segs[i+1].startHour : Infinity});
+        // optional: regression line -> fitted phase on the last LD day and on the day after
+        // (nextLabel: what the day after is, e.g. 'day 1 of DD')
+        if(S.ld_fit){ ldRegression(g, ev, P, on, g.to, dataEnd);
+          g.nextLabel = i + 1 < segs.length ? `day 1 of ${segs[i+1].mode === 'LD' ? 'the next LD' : segs[i+1].mode}` : 'extrapolated'; }
       }else{
         // 0° reference
         // LL/DD: R = 0-degree reference (h); P0 = cycle length used to count cycles (previous LD period)
@@ -2315,9 +2464,13 @@ const f1 = v => Number.isFinite(v) ? v.toFixed(1) : '–';
 // Summary table (header + one row per condition and type).
 function resultRows(ana){
   // columns of the summary table (same as the desktop app)
-  const head = ['Condition', 'Type', 'n', 'Period (h)', 'Period SE (h)', 'R²', 'Phase (°)', 'Phase (h)', 'Phase SD (°)', '0° reference'];
-  const rows = ana.groups.map(g => [g.label, g.kind + 's', g.n, f2(g.period), g.mode === 'LD' ? '' : f2(g.se), g.mode === 'LD' ? '' : (Number.isFinite(g.r2) ? g.r2.toFixed(3) : '–'),
-    f1(g.phaseDeg), f2(g.phaseH), g.mode === 'LD' ? f1(g.sd) : '', g.ref + (g.fitNote ? ` (${g.fitNote})` : '')]);
+  // the last five columns: LD regression (slope, fitted ZT/phase on the last LD day and on the day after)
+  const head = ['Condition', 'Type', 'n', 'Period (h)', 'Period SE (h)', 'R²', 'Phase (°)', 'Phase (h)', 'Phase SD (°)', '0° reference',
+                'LD fit slope (h/cycle)', 'LD fit: last LD day ZT (h)', 'LD fit: last LD day phase (°)', 'LD fit: day after ZT (h)', 'LD fit: day after phase (°)'];
+  const rows = ana.groups.map(g => { const F = g.ldFit;
+    return [g.label, g.kind + 's', g.n, f2(g.period), g.mode === 'LD' ? '' : f2(g.se), g.mode === 'LD' ? '' : (Number.isFinite(g.r2) ? g.r2.toFixed(3) : '–'),
+    f1(g.phaseDeg), f2(g.phaseH), g.mode === 'LD' ? f1(g.sd) : '', g.ref + (g.fitNote ? ` (${g.fitNote})` : '') + (g.ldFitNote ? ` (LD fit: ${g.ldFitNote})` : ''),
+    F ? F.slope.toFixed(3) : '', F ? f2(F.last.zt) : '', F ? f1(F.last.deg) : '', F ? f2(F.next.zt) : '', F ? f1(F.next.deg) : '']; });
   return [head, ...rows];
 }
 // Table of every selected point (time, local time, condition, cycle, ZT or t, phase, residual).
@@ -2623,6 +2776,8 @@ function buildSVG(S, res){
       out.push(`<line x1="${X(x1).toFixed(2)}" y1="${Y(r).toFixed(2)}" x2="${X(x1 + (h2 - h1) - T).toFixed(2)}" y2="${Y(r+1).toFixed(2)}" ${style}/>`);
     }
   };
+  // open diamonds of the LD regression (last LD day, day after); drawn after the points so they stay visible
+  const fitMarks = [];
   // 'Draw fitted lines'
   if(S.draw_fit){
     const ana = analyze(S, res);
@@ -2634,6 +2789,27 @@ function buildSVG(S, res){
       const P = g2.period, base = g2.on + g2.phaseH, a = Math.max(g2.from, lo), b = Math.min(g2.to, hi);
       for(let nn = Math.ceil((a - base)/P - 1e-9); base + (nn + 1)*P < b + 1e-9; nn++)
         seg2(base + nn*P, base + (nn + 1)*P, 'stroke="#111" stroke-width="0.9" stroke-dasharray="1.5 2.5"');
+    }
+    // LD regression (option 'LD: also fit a regression line'): dashed line in the colour of the type from the
+    // first fitted cycle to the day after the last LD day, with open diamonds at the fitted events of the last
+    // LD day and of the day after
+    for(const g2 of ana.groups){
+      const F = g2.ldFit; if(g2.mode !== 'LD' || !F) continue;
+      const col = g2.kind === 'Peak' ? PEAK : TROUGH;
+      for(let nn = Math.min(F.n0, F.next.k); nn < Math.max(F.n1, F.next.k); nn++){
+        const h1 = g2.on + F.b + F.slope*nn, h2 = h1 + F.slope;
+        seg2(h1, h2, `stroke="${col}" stroke-width="1.3" stroke-dasharray="5 3" opacity="0.75"`);
+      }
+      // half-size of the diamond: just outside the selection ring of a point
+      const dm = Math.max(1.6, Math.min(4, rh*0.32)) + 4.8;   // point radius + room for the selection ring
+      for(const d of [F.last, F.next]){
+        const day = Math.floor((d.h - o)/T), x = d.h - o - day*T;
+        for(const [xx, yy] of [[x, day], ...(dbl ? [[x + T, day - 1]] : [])]){
+          if(yy < firstRow || yy > lastRow) continue;
+          const cx = X(xx), cy = Y(yy);
+          fitMarks.push(`<path d="M${cx.toFixed(2)},${(cy - dm).toFixed(2)} L${(cx + dm).toFixed(2)},${cy.toFixed(2)} L${cx.toFixed(2)},${(cy + dm).toFixed(2)} L${(cx - dm).toFixed(2)},${cy.toFixed(2)} Z" fill="none" stroke="${col}" stroke-width="1.6"><title>${g2.kind}, LD fit ${d === F.last ? 'last LD day' : 'day after'}: ZT ${d.zt.toFixed(2)} h</title></path>`);
+        }
+      }
     }
     // LL/DD: the regression line t = b + tau*n between the first and last selected cycle
     for(const g2 of ana.groups){
@@ -2677,6 +2853,7 @@ function buildSVG(S, res){
     }
   }
   out.push(...markSvg);                          // asterisks on top of the points
+  out.push(...fitMarks);                         // LD regression: fitted events on the last LD day and the day after
   out.push(...hits);                             // invisible targets for clicking points
   if(!all.length && !sdata) out.push(`<text x="${ml + plotW/2}" y="${(plotTop + plotH/2 + 5).toFixed(1)}" font-size="14" fill="#666" text-anchor="middle">Paste peak and trough times to plot them</text>`);
 
@@ -3310,6 +3487,8 @@ for(const nm of ['drag_mode','sel_target'])
   document.querySelectorAll(`input[name=${nm}]`).forEach(r => r.addEventListener('change', () => { state[nm] = r.value; save(); }));
 $('phaseRef').addEventListener('change', () => { state.phase_ref = $('phaseRef').value; changed(); });
 $('draw_fit').addEventListener('change', () => { state.draw_fit = $('draw_fit').checked; changed(); });
+// 'LD: also fit a regression line' (phase on the last LD day and the day after)
+$('ld_fit').addEventListener('change', () => { state.ld_fit = $('ld_fit').checked; changed(); });
 // selection helpers: key of the list, test, set/unset (values matched by their 4-decimal key)
 const selKey = kk => kk === 'p' ? 'sel_peaks' : 'sel_troughs';
 function isSel(kk, v){ return state[selKey(kk)].some(x => k4(x) === k4(v)); }
@@ -3424,7 +3603,7 @@ function dialSvg(seg, gs){
   return o.join('');
 }
 // tooltips for some table headers
-const HEAD_TIPS = {"Mean ZT (h)": "Hours after light-on (ZT0) within the L + D cycle; the phase in hours = phase (°) ÷ 360 × (L + D)", "Phase (h)": "Hours from the 0° reference to the event within one cycle: LD = mean ZT; LL/DD = b mod τ (= phase (°) ÷ 360 × τ)", "Phase (CT)": "Phase (h) in circadian hours (one cycle τ scaled to 24 h): Phase (h) × 24 ÷ τ", "Intercept b (h)": "Fitted event time of cycle 0, in hours after the 0° reference", "Period τ (h)": "Slope of the regression: the free-running period", "r": "Mean resultant length, 0–1: how tightly the points cluster (1 = all at the same phase)"};
+const HEAD_TIPS = {"Fitted time": "Event time on that day from the LD regression line: first light-on + b + s·n", "ZT (h)": "Hours after light-on of that day (fitted value of the regression, wrapped into one L + D cycle)", "± SE (h)": "Standard error of the regression line on that day (larger the further it is from the fitted points)", "Light-on of the day": "Clock time of the light-on that starts this LD cycle (for the day after: the projected light-on)", "Mean ZT (h)": "Hours after light-on (ZT0) within the L + D cycle; the phase in hours = phase (°) ÷ 360 × (L + D)", "Phase (h)": "Hours from the 0° reference to the event within one cycle: LD = mean ZT; LL/DD = b mod τ (= phase (°) ÷ 360 × τ)", "Phase (CT)": "Phase (h) in circadian hours (one cycle τ scaled to 24 h): Phase (h) × 24 ÷ τ", "Intercept b (h)": "Fitted event time of cycle 0, in hours after the 0° reference", "Period τ (h)": "Slope of the regression: the free-running period", "r": "Mean resultant length, 0–1: how tightly the points cluster (1 = all at the same phase)"};
 const th = h => `<th${HEAD_TIPS[h] ? ` title="${esc(HEAD_TIPS[h])}"` : ''}>${esc(h)}${HEAD_TIPS[h] ? ' <span aria-hidden="true" style="opacity:.6">ⓘ</span>' : ''}</th>`;
 // Result cards per condition: dial (light/dark ring, points, mean phase), big phase numbers and a table.
 // Fill #anaCards: one card per condition with the dial, the big phase numbers, a table and a
@@ -3465,16 +3644,34 @@ function renderCards(ana, res){
              f1(g.phaseSe), f2(g.phaseH), f2(g.ct), Number.isFinite(g.r2) ? g.r2.toFixed(4) : '–'];
       });
       table = `<table><thead><tr>${head.map(th).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+      // LD regression: one row per kind and day (last LD day, day after), then slope and R^2 per kind
+      const fits = s.mode === 'LD' ? gs.filter(g => g.ldFit || g.ldFitNote) : [];
+      if(fits.length){
+        const fh = ['Kind', 'Day', 'Cycle', 'Light-on of the day', 'Fitted time', 'ZT (h)', 'Phase (°)', '± SE (h)'];
+        const fr = [];
+        for(const g of fits){
+          const k = `<span class="${g.kind === 'Peak' ? 'pk' : 'tr'}"><b>${g.kind}s</b></span>`;
+          if(!g.ldFit){ fr.push([k, `(${esc(g.ldFitNote)})`, '', '', '', '', '', '']); continue; }
+          for(const [lab, d] of [['Last LD day', g.ldFit.last], [`Day after (${g.nextLabel})`, g.ldFit.next]])
+            fr.push([k, esc(lab), d.n, esc(fmtLocal(z + Math.round(d.onH*60)*60000, tz)), esc(at(d.h)), f2(d.zt), f1(d.deg), f2(d.se)]);
+        }
+        table += `<p class="sub" style="margin:10px 0 2px"><b>Regression (t = b + s·n)</b></p><table><thead><tr>${fh.map(th).join('')}</tr></thead><tbody>${fr.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+        // slope (= period of the rhythm), its drift from L + D, R^2, and a warning when the last day lies outside the fitted cycles
+        table += fits.filter(g => g.ldFit).map(g => { const F = g.ldFit, P = s.L + s.D, dr = F.slope - P;
+          return `<p class="fn"><b class="${g.kind === 'Peak' ? 'pk' : 'tr'}">${g.kind}s</b>: slope s = ${F.slope.toFixed(3)} h/cycle ± ${f2(F.slopeSe)} (drift ${dr >= 0 ? '+' : '−'}${Math.abs(dr).toFixed(2)} h per cycle against L + D = ${P.toFixed(2)} h), R² = ${F.r2.toFixed(3)}, fitted cycles ${F.n0}–${F.n1}${F.last.k > F.n1 ? `; the last LD day (cycle ${F.last.n}) is extrapolated` : ''}${F.open ? '; this condition has no end, so the last LD day is the cycle of the latest peak or trough' : ''}.</p>`; }).join('');
+      }
       table += s.mode === 'LD'
-        ? `<p class="fn"><b>Mean ZT (h)</b> is the phase in hours: the time after light-on (ZT0) within the ${(s.L + s.D).toFixed(2)}-h cycle, = phase (°) ÷ 360 × (L + D).</p>`
+        ? `<p class="fn"><b>Mean ZT (h)</b> is the phase in hours: the time after light-on (ZT0) within the ${(s.L + s.D).toFixed(2)}-h cycle, = phase (°) ÷ 360 × (L + D).${fits.length ? ' <b>Regression:</b> t = hours after the first light-on of the condition, n = LD cycle number (cycle n begins at its light-on); ZT (h) = b + s·n − n·(L + D), wrapped into one cycle; ± SE is the standard error of the fitted line on that day.' : ''}</p>`
         : `<p class="fn"><b>Phase (h)</b> is where the rhythm sits within one cycle: the hours from the 0° reference to the fitted event, b mod τ (= phase (°) ÷ 360 × τ). <b>Phase (CT)</b> is the same in circadian hours, with one cycle τ scaled to 24 h: Phase (h) × 24 ÷ τ.</p>`;
       // the list of every selected point of this condition
       const ev = gs.flatMap(g => g.events.map(e => ({e, g}))).sort((a, b) => a.e.h - b.e.h);
-      const eh = ['Kind', 'Time (h)', 'Local date/time', 'Cycle', s.mode === 'LD' ? 'ZT (h)' : 't from 0° (h)', 'Phase (°)', ...(s.mode === 'LD' ? [] : ['Residual (h)'])];
+      // residuals: LL/DD always, LD when the regression was fitted
+      const withRes = s.mode !== 'LD' || gs.some(g => g.ldFit);
+      const eh = ['Kind', 'Time (h)', 'Local date/time', 'Cycle', s.mode === 'LD' ? 'ZT (h)' : 't from 0° (h)', 'Phase (°)', ...(withRes ? ['Residual (h)'] : [])];
       const er = ev.map(({e, g}) => {
         const ph = e.zt !== undefined ? e.phase : (Number.isFinite(g.period) ? (((e.t % g.period) + g.period) % g.period)/g.period*360 : NaN);
         return [`<span class="${e.kind === 'Peak' ? 'pk' : 'tr'}">${e.kind}</span>`, e.h.toFixed(2), esc(fmtLocal(z + Math.round(e.h*60)*60000, tz)), e.cycle,
-                f2(e.zt !== undefined ? e.zt : e.t), f1(ph), ...(s.mode === 'LD' ? [] : [e.resid !== undefined ? f2(e.resid) : '–'])];
+                f2(e.zt !== undefined ? e.zt : e.t), f1(ph), ...(withRes ? [e.resid !== undefined ? f2(e.resid) : '–'] : [])];
       });
       table += `<details><summary>Each selected point</summary><table><thead><tr>${eh.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${er.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></details>`;
     }else table = '<p class="none">No points selected in this condition.</p>';
@@ -3553,6 +3750,7 @@ async function tsLoadSeries(text){
 // Load example series (example 1) / Example 2 (date/time, own schedule, filter order 301)
 $('seriesExample').addEventListener('click', () => tsLoadExample(exampleSeriesText()));
 $('seriesExample2').addEventListener('click', () => tsLoadExample(example2SeriesText(), {ts_sinc_order:EXAMPLE2_ORDER}, example2Settings()));   // date/time, every 8 min, own schedule
+$('seriesExample3').addEventListener('click', () => tsLoadExample(example3SeriesText(), {ts_sinc_order:EXAMPLE3_ORDER}, example3Settings()));   // drift under LD, then LL with a 1-h shift, every 15 min
 async function tsLoadExample(text, extra, conditions){                                // example series + the example clock time and LD schedule
   // ask before replacing data
   const has = state.series.trim() || state.peaks.trim() || state.troughs.trim();
@@ -3765,7 +3963,7 @@ function syncControls(){                       // state -> every control (after 
   $('xMajor').value = state.x_major; $('xMinor').value = state.x_minor;
   syncSwatches();
   for(const nm of ['drag_mode','sel_target']) document.querySelectorAll(`input[name=${nm}]`).forEach(r => r.checked = r.value === state[nm]);
-  $('phaseRef').value = state.phase_ref; $('draw_fit').checked = !!state.draw_fit;
+  $('phaseRef').value = state.phase_ref; $('draw_fit').checked = !!state.draw_fit; $('ld_fit').checked = !!state.ld_fit;
   for(const id of ['show_values','link_peak','link_trough','label_onsets','label_row_starts','mark_times','mark_changes','rows_auto','show_points']) $(id).checked = !!state[id];
   $('ts_draw').value = state.ts_draw; $('ts_draw_scale').value = state.ts_draw_scale;
   document.querySelectorAll('input[name=ts_draw_data]').forEach(r => r.checked = r.value === state.ts_draw_data);
