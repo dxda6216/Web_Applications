@@ -558,7 +558,7 @@ textarea[readonly]{background:var(--bg)}
         <label class="chk"><input type="checkbox" id="ld_fit">LD: also fit a regression line (phase on the last LD day and the day after)</label>
         <label class="chk" title="E.g. LD 12:12 -> LL at light-on: the first 12 h of LL are an ordinary light phase, so points there count as LD. LD 12:12 -> DD at lights-off: the first 12 h of DD are an ordinary dark phase. LL -> LD starting with light: the first light phase still counts as LL."><input type="checkbox" id="carry_over">Count the unchanged start of a condition with the one before (until the light/dark really changes)</label>
       </div>
-      <p class="hint"><b>LD:</b> phase = ZT ÷ (L + D) × 360°, with ZT0 at light-on (circular mean of the selected points). With the regression option, the event time t (h after the first light-on) is also fitted as t = b + s·n (n = LD cycle number); the fitted ZT on cycle n, b + s·n − n·(L + D), gives the phase on the last LD day and, extrapolated, on the day after (e.g. day 1 of DD). <b>Unchanged start:</b> a new condition often begins with the light/dark the old one would have given anyway (LD 12:12 → LL at light-on: the first 12 h of LL are an ordinary light phase; LD 12:12 → DD at lights-off: the first 12 h of DD an ordinary dark phase). With this option, points there are analysed with the previous condition; the boundary is the first moment the light/dark really changes. <b>LL/DD:</b> the event time t (h after the 0° reference) is fitted as t = b + τ·n, where n is the cycle number (cycle 0 begins at the reference); the slope τ is the free-running period and the phase is (b mod τ) ÷ τ × 360°.</p>
+      <p class="hint"><b>LD:</b> phase = ZT ÷ (L + D) × 360°, with ZT0 at light-on (circular mean of the selected points). With the regression option, the event time t (h after the first light-on) is also fitted as t = b + s·n (n = LD cycle number); the fitted ZT on cycle n, b + s·n − n·(L + D), gives the phase on the last LD day and, extrapolated, on the day after when that is day 1 of the next condition (e.g. day 1 of DD). <b>Unchanged start:</b> a new condition often begins with the light/dark the old one would have given anyway (LD 12:12 → LL at light-on: the first 12 h of LL are an ordinary light phase; LD 12:12 → DD at lights-off: the first 12 h of DD an ordinary dark phase). With this option, points there are analysed with the previous condition; the boundary is the first moment the light/dark really changes. <b>LL/DD:</b> the event time t (h after the 0° reference) is fitted as t = b + τ·n, where n is the cycle number (cycle 0 begins at the reference); the slope τ is the free-running period and the phase is (b mod τ) ÷ τ × 360°.</p>
       </div>
       <h3 style="margin-top:14px">Phase results</h3>
       <p class="info" id="anaNote"></p>
@@ -2466,13 +2466,16 @@ function analyze(S, res){
           from:bounds[i], to:bounds[i+1]});
         // optional: regression line -> fitted phase on the last LD day and on the day after.  The last LD day is
         // the last cycle whose light-on falls before the effective end, so after LD 12:12 -> LL at light-on the
-        // light phase that is still ordinary makes its day an LD day.  nextLabel says which day of the next
-        // condition the day after is, counted from the nominal start of that condition (e.g. 'day 1 of DD',
-        // or 'day 2 of LL' when the first LL day was still an LD day).
+        // light phase that is still ordinary makes its day an LD day.  The day after is reported only when it is
+        // the first day of the next condition (e.g. 'day 1 of DD' after LD -> DD at lights-off); when the first
+        // day of the next condition was itself the last LD day, the day after would be its day 2, which is not
+        // needed, so g.ldFit.next is set to null.  For the last condition the day after is extrapolated.
         if(S.ld_fit){ ldRegression(g, ev, P, on, g.to, dataEnd);
           if(i + 1 < segs.length){
+            // dn: which day of the next condition the day after is, counted from its nominal start
             const nx = segs[i+1], dn = g.ldFit ? Math.max(1, Math.floor((g.ldFit.next.onH - nx.startHour)/P + 1e-6) + 1) : 1;
-            g.nextLabel = `day ${dn} of ${nx.mode === 'LD' ? 'the next LD' : nx.mode}`;
+            g.nextLabel = `day 1 of ${nx.mode === 'LD' ? 'the next LD' : nx.mode}`;
+            if(g.ldFit && dn > 1) g.ldFit.next = null;
           }else g.nextLabel = 'extrapolated'; }
       }else{
         // 0° reference
@@ -2536,7 +2539,7 @@ function resultRows(ana){
   const rows = ana.groups.map(g => { const F = g.ldFit;
     return [g.label, g.kind + 's', g.n, f2(g.period), g.mode === 'LD' ? '' : f2(g.se), g.mode === 'LD' ? '' : (Number.isFinite(g.r2) ? g.r2.toFixed(3) : '–'),
     f1(g.phaseDeg), f2(g.phaseH), g.mode === 'LD' ? f1(g.sd) : '', g.ref + (g.fitNote ? ` (${g.fitNote})` : '') + (g.ldFitNote ? ` (LD fit: ${g.ldFitNote})` : ''),
-    F ? F.slope.toFixed(3) : '', F ? f2(F.last.zt) : '', F ? f1(F.last.deg) : '', F ? f2(F.next.zt) : '', F ? f1(F.next.deg) : '']; });
+    F ? F.slope.toFixed(3) : '', F ? f2(F.last.zt) : '', F ? f1(F.last.deg) : '', F && F.next ? f2(F.next.zt) : '', F && F.next ? f1(F.next.deg) : '']; });
   return [head, ...rows];
 }
 // Table of every selected point (time, local time, condition, cycle, ZT or t, phase, residual).
@@ -2862,13 +2865,15 @@ function buildSVG(S, res){
     for(const g2 of ana.groups){
       const F = g2.ldFit; if(g2.mode !== 'LD' || !F) continue;
       const col = g2.kind === 'Peak' ? PEAK : TROUGH;
-      for(let nn = Math.min(F.n0, F.next.k); nn < Math.max(F.n1, F.next.k); nn++){
+      // the line runs to the day after, or to the last LD day when there is no day after
+      const kEnd = (F.next || F.last).k;
+      for(let nn = Math.min(F.n0, kEnd); nn < Math.max(F.n1, kEnd); nn++){
         const h1 = g2.on + F.b + F.slope*nn, h2 = h1 + F.slope;
         seg2(h1, h2, `stroke="${col}" stroke-width="1.3" stroke-dasharray="5 3" opacity="0.75"`);
       }
       // half-size of the diamond: just outside the selection ring of a point
       const dm = Math.max(1.6, Math.min(4, rh*0.32)) + 4.8;   // point radius + room for the selection ring
-      for(const d of [F.last, F.next]){
+      for(const d of [F.last, F.next].filter(Boolean)){
         const day = Math.floor((d.h - o)/T), x = d.h - o - day*T;
         for(const [xx, yy] of [[x, day], ...(dbl ? [[x + T, day - 1]] : [])]){
           if(yy < firstRow || yy > lastRow) continue;
@@ -3722,7 +3727,7 @@ function renderCards(ana, res){
         for(const g of fits){
           const k = `<span class="${g.kind === 'Peak' ? 'pk' : 'tr'}"><b>${g.kind}s</b></span>`;
           if(!g.ldFit){ fr.push([k, `(${esc(g.ldFitNote)})`, '', '', '', '', '']); continue; }
-          for(const [lab, d] of [['Last LD day', g.ldFit.last], [`Day after (${g.nextLabel})`, g.ldFit.next]])
+          for(const [lab, d] of [['Last LD day', g.ldFit.last], [`Day after (${g.nextLabel})`, g.ldFit.next]].filter(r => r[1]))
             fr.push([k, esc(lab), d.n, `<span title="${d.h.toFixed(2)} h after 0 h">${esc(fmtLocal(z + Math.round(d.h*60)*60000, tz))}</span>`, f2(d.zt), f1(d.deg), f2(d.se)]);
         }
         table += `<p class="sub" style="margin:10px 0 2px"><b>Regression (t = b + s·n)</b></p><div class="fitwrap"><table class="fit"><thead><tr>${fh.map(th).join('')}</tr></thead><tbody>${fr.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
