@@ -556,8 +556,9 @@ textarea[readonly]{background:var(--bg)}
         </select>
         <label class="chk"><input type="checkbox" id="draw_fit">Draw fitted lines (LD: mean phase, dotted black, and regression, dashed; LL/DD: regression)</label>
         <label class="chk"><input type="checkbox" id="ld_fit">LD: also fit a regression line (phase on the last LD day and the day after)</label>
+        <label class="chk" title="E.g. LD 12:12 -> LL at light-on: the first 12 h of LL are an ordinary light phase, so points there count as LD. LD 12:12 -> DD at lights-off: the first 12 h of DD are an ordinary dark phase. LL -> LD starting with light: the first light phase still counts as LL."><input type="checkbox" id="carry_over">Count the unchanged start of a condition with the one before (until the light/dark really changes)</label>
       </div>
-      <p class="hint"><b>LD:</b> phase = ZT ÷ (L + D) × 360°, with ZT0 at light-on (circular mean of the selected points). With the regression option, the event time t (h after the first light-on) is also fitted as t = b + s·n (n = LD cycle number); the fitted ZT on cycle n, b + s·n − n·(L + D), gives the phase on the last LD day and, extrapolated, on the day after (e.g. day 1 of DD). <b>LL/DD:</b> the event time t (h after the 0° reference) is fitted as t = b + τ·n, where n is the cycle number (cycle 0 begins at the reference); the slope τ is the free-running period and the phase is (b mod τ) ÷ τ × 360°.</p>
+      <p class="hint"><b>LD:</b> phase = ZT ÷ (L + D) × 360°, with ZT0 at light-on (circular mean of the selected points). With the regression option, the event time t (h after the first light-on) is also fitted as t = b + s·n (n = LD cycle number); the fitted ZT on cycle n, b + s·n − n·(L + D), gives the phase on the last LD day and, extrapolated, on the day after (e.g. day 1 of DD). <b>Unchanged start:</b> a new condition often begins with the light/dark the old one would have given anyway (LD 12:12 → LL at light-on: the first 12 h of LL are an ordinary light phase; LD 12:12 → DD at lights-off: the first 12 h of DD an ordinary dark phase). With this option, points there are analysed with the previous condition; the boundary is the first moment the light/dark really changes. <b>LL/DD:</b> the event time t (h after the 0° reference) is fitted as t = b + τ·n, where n is the cycle number (cycle 0 begins at the reference); the slope τ is the free-running period and the phase is (b mod τ) ÷ τ × 360°.</p>
       </div>
       <h3 style="margin-top:14px">Phase results</h3>
       <p class="info" id="anaNote"></p>
@@ -1809,17 +1810,19 @@ const example2Settings = () => ({
           {mode:'DD', L:'12:00', D:'12:00', start:'2026-11-13 19:37', phase:'Light'}, blankCycle(), blankCycle()],
   placed:'2026-10-28 13:50', origin:'lights_on', origin_time:'', period:DEFAULT_PERIOD, rows_auto:true, title:'Example 2',
   sel_peaks:[], sel_troughs:[], input_mode:'series'});
-// Example 3: a rhythm that slowly drifts later under LD and is shifted on release into LL, to show the LD regression.
-// Synthetic record every 15 min (column 1 = hours after 0 h): under LD 12:12 the peaks fall at ZT 6.5 + 0.45*n
-// (n = LD cycle), i.e. the rhythm delays by about 0.45 h every day instead of keeping a fixed ZT, while the peaks
-// stay in the light (ZT 6.5 -> 9.7) and the troughs in the dark (ZT 18.7 -> 21.9).  The mean ZT of the LD days
-// lies near the middle of that drift; the regression gives the phase reached on the last LD day (peak about
-// ZT 9.7) and, extrapolated, on the first day in LL (about ZT 10.1).  From the light-on of the 9th day (192 h)
-// the light stays on (LL): the light in the early subjective night of that first LL day delays the rhythm by
-// about 1 h (built up between ZT 12 and ZT 18), after which it free-runs with a slightly longer tau of about 24.9 h, so the LL
-// regression lies about 1 h later than the LD extrapolation.  Bioluminescence-like trend: a decaying
-// baseline, a slowly decaying amplitude and a little noise.  Only the signal is stored: the times are
-// 0, 0.25, 0.5, ... h (example3SeriesText).
+// Example 3: a rhythm that slowly drifts later under LD and is shifted on release into LL, to show the LD
+// regression and the effective boundary between conditions.  Synthetic record every 15 min (column 1 = hours
+// after 0 h): under LD 12:12 the peaks fall at ZT 6.5 + 0.45*n (n = LD cycle), i.e. the rhythm delays by about
+// 0.45 h every day instead of keeping a fixed ZT, while the peaks stay in the light (ZT 6.5 -> 10.0) and the
+// troughs in the dark (ZT 18.7 -> 21.9).  From the light-on of the 9th day (192 h) the light stays on (LL).
+// The first 12 h of LL are an ordinary light phase, so (with the carry-over option) the peak at about ZT 10.0
+// in them still counts as LD and that day is the last LD day.  The mean ZT of the LD days lies near the middle
+// of the drift; the regression gives the phase on the last LD day (peak about ZT 10.0) and, extrapolated, on
+// the day after (day 2 of LL, about ZT 10.5).  The light in the early subjective night of the first LL day
+// delays the rhythm by about 1 h (built up between ZT 12 and ZT 18), after which it free-runs with a slightly
+// longer tau of about 24.9 h, so the LL fit lies about 0.6 h after the LD extrapolation.  Bioluminescence-like
+// trend: a decaying baseline, a slowly decaying amplitude and a little noise.  Only the signal is stored: the
+// times are 0, 0.25, 0.5, ... h (example3SeriesText).
 const EXAMPLE3_DATA = '3751 3898 4061 4201 4372 4530 4676 4828 4957 5107 5238 5368 5479 5588 5720 5825 5894 5992 6075 ' +
   '6129 6188 6232 6256 6284 6311 6323 6293 6288 6276 6218 6179 6112 6060 5995 5888 5792 5686 5588 ' +
   '5467 5325 5216 5067 4933 4785 4617 4480 4313 4143 3973 3814 3636 3483 3303 3140 2989 2836 2673 ' +
@@ -1999,7 +2002,7 @@ function defaultSettings(){
   // the example plus all display options and the time-series options
   return {...exampleSettings(), plot:'double', rowlab:'number', show_values:false, link_peak:false, link_trough:false,
           row_min:0, row_max:5, label_onsets:false, label_row_starts:false, mark_times:true, mark_changes:true, x_major:X_MAJOR[3], x_minor:X_MINOR[0], light_color:LIGHT_COLORS[0][1], dark_color:DARK_COLORS[0][1],
-          phase_ref:'zt0_prev', draw_fit:true, ld_fit:true, drag_mode:'select', sel_target:'both',
+          phase_ref:'zt0_prev', draw_fit:true, ld_fit:true, carry_over:true, drag_mode:'select', sel_target:'both',
           series:'', ts_edits:emptyEdits(), ...TS_DEFAULTS, ts_draw:'none', ts_draw_data:'raw', ts_draw_scale:'all', show_points:true, clock_mode:'local'};
 }
 // Validate a settings object (from storage, a file or the desktop app) and fill in defaults, so the rest of the code
@@ -2043,6 +2046,7 @@ function normalise(s){
   if(!['zt0_prev','start','zero','day0'].includes(d.phase_ref)) d.phase_ref = 'zt0_prev';
   d.draw_fit = d.draw_fit !== false;
   d.ld_fit = d.ld_fit !== false;
+  d.carry_over = d.carry_over !== false;
   if(!['select','deselect'].includes(d.drag_mode)) d.drag_mode = 'select';
   if(!['both','peaks','troughs'].includes(d.sel_target)) d.sel_target = 'both';
   // time-series input and its options, validated
@@ -2366,6 +2370,53 @@ function ldRegression(g, ev, P, on, to, dataEnd){
   g.ldFit = {slope:s, slopeSe:Math.sqrt(v/sxx), r2: syy > 0 ? 1 - ssr/syy : 1, b, n0:Math.min(...xs), n1:Math.max(...xs),
              last:at(nLast), next:at(nLast + 1), open:!Number.isFinite(to)};
 }
+// ---- Effective boundaries between conditions ----
+// A new condition often begins with the same light/dark the old one would have given anyway.  Moving from
+// LD 12:12 to LL at light-on, the first 12 h of LL are an ordinary LD light phase: the animal sees no change
+// until the lights fail to go off.  From LD 15:15 to LL at light-on, the first 15 h; from LD 12:12 to DD at
+// lights-off, the first 12 h of DD are an ordinary dark phase; from LL to an LD that starts with light, the
+// first light phase is still LL.  With the option 'Count the unchanged start of a condition with the one
+// before' (S.carry_over, on by default), points in that unchanged part are analysed with the previous
+// condition, i.e. the boundary between two conditions is the first moment the light/dark really changes.
+// lightAt(s, t): is the light on at time t (h) under condition s, continued for ever in both directions?
+function lightAt(s, t){
+  if(s.mode === 'LL') return true;
+  if(s.mode === 'DD') return false;
+  const P = s.L + s.D, on = s.startsLight ? s.startHour : s.startHour + s.D;   // first light-on of the LD
+  return (((t - on) % P) + P) % P < s.L;                                        // inside the light part?
+}
+// lightEdges(s, a, b): the light-on and lights-off times of condition s strictly between a and b (h)
+function lightEdges(s, a, b){
+  if(s.mode !== 'LD') return [];
+  const P = s.L + s.D, on = s.startsLight ? s.startHour : s.startHour + s.D, out = [];
+  for(let k = Math.floor((a - on)/P) - 1; on + k*P <= b; k++)
+    for(const t of [on + k*P, on + k*P + s.L]) if(t > a && t < b) out.push(t);
+  return out;
+}
+// effectiveStart(prev, next, cap): the first moment, from the start of `next`, at which its light/dark differs
+// from `prev` continued.  Between the start, the light-ons/offs of both and a window end, the light state of
+// each is constant, so it is enough to compare the two in the middle of every piece; the first piece that
+// differs gives the boundary.  `cap` = start of the condition after `next`: if nothing differs before it, the
+// whole of `next` counts with `prev` (identical light/dark).
+function effectiveStart(prev, next, cap){
+  const a = next.startHour, len = s => s.mode === 'LD' ? s.L + s.D : 24;
+  const b = Math.min(cap, a + 3*Math.max(len(prev), len(next)));
+  const ts = [a, ...lightEdges(prev, a, b), ...lightEdges(next, a, b), b].sort((x, y) => x - y);
+  for(let k = 0; k + 1 < ts.length; k++){
+    if(ts[k+1] - ts[k] < 1e-9) continue;
+    const m = (ts[k] + ts[k+1])/2;
+    if(lightAt(prev, m) !== lightAt(next, m)) return ts[k];
+  }
+  return Number.isFinite(cap) ? cap : a;
+}
+// conditionBounds(S, res): bounds[i] .. bounds[i+1] (h) is the time range analysed with condition i
+function conditionBounds(S, res){
+  const segs = res.ld.segs, n = segs.length;
+  const B = segs.map((s, i) => i === 0 ? (res.ld.extendBefore ? -Infinity : s.startHour)
+    : (S.carry_over ? effectiveStart(segs[i-1], s, i + 1 < n ? segs[i+1].startHour : Infinity) : s.startHour));
+  B.push(Infinity);
+  return B;
+}
 // selected peaks/troughs -> phase per condition (LD: ZT; LL/DD: regression of time on cycle number)
 function analyze(S, res){
   // result: one group per condition and kind, all selected events, notes
@@ -2380,14 +2431,19 @@ function analyze(S, res){
   out.events = events.sort((a, b) => a.h - b.h);
   if(!events.length){ out.note = 'Select peaks or troughs in the actogram to analyse their phase.'; return out; }
   if(!res.ld){ out.note = 'Set valid light/dark conditions (and the clock time of 0 h) to analyse phases.'; return out; }
-  // 2. the condition of each event
-  const segs = res.ld.segs;
+  // 2. the condition of each event: the range bounds[i] .. bounds[i+1] (the effective boundaries: see
+  //    conditionBounds; without the carry-over option, the start times of the conditions)
+  const segs = res.ld.segs, bounds = conditionBounds(S, res);
   for(const e of events){
     e.seg = -1;
-    segs.forEach((s, i) => { const a = (i === 0 && res.ld.extendBefore) ? -Infinity : s.startHour, b = i + 1 < segs.length ? segs[i+1].startHour : Infinity;
-      if(e.h >= a && e.h < b) e.seg = i; });
+    segs.forEach((s, i) => { if(e.h >= bounds[i] && e.h < bounds[i+1]) e.seg = i; });
   }
   const notes = [];
+  // say where the unchanged start of a condition was counted with the one before
+  for(let i = 1; i < segs.length; i++){
+    const extra = bounds[i] - segs[i].startHour;
+    if(extra > 1e-6) notes.push(`${condLabel(segs[i], i)}: ${Number.isFinite(bounds[i+1]) && bounds[i] >= bounds[i+1] ? 'its light/dark is the same as before, so all of it is' : `its first ${+extra.toFixed(2)} h keep the light/dark of condition ${i}, so points there are`} analysed with condition ${i}.`);
+  }
   if(events.some(e => e.seg < 0)) notes.push('Points before the first condition are not analysed.');
   // 3. groups: every condition x (peaks, troughs) that has events
   for(let i = 0; i < segs.length; i++){
@@ -2405,12 +2461,19 @@ function analyze(S, res){
         // circular mean of the phases
         const cm = circMean(ev.map(e => e.phase));
         // mean phase in degrees and in hours (mean ZT), spread, and the time range of the condition
+        // from/to: the time range analysed with this condition (effective boundaries)
         Object.assign(g, {period:P, phaseDeg:cm.mean, phaseH:cm.mean/360*P, sd:cm.sd, r:cm.r, ref:'light-on (ZT0)', on,
-          from:(i === 0 && res.ld.extendBefore) ? -Infinity : s.startHour, to:i + 1 < segs.length ? segs[i+1].startHour : Infinity});
-        // optional: regression line -> fitted phase on the last LD day and on the day after
-        // (nextLabel: what the day after is, e.g. 'day 1 of DD')
+          from:bounds[i], to:bounds[i+1]});
+        // optional: regression line -> fitted phase on the last LD day and on the day after.  The last LD day is
+        // the last cycle whose light-on falls before the effective end, so after LD 12:12 -> LL at light-on the
+        // light phase that is still ordinary makes its day an LD day.  nextLabel says which day of the next
+        // condition the day after is, counted from the nominal start of that condition (e.g. 'day 1 of DD',
+        // or 'day 2 of LL' when the first LL day was still an LD day).
         if(S.ld_fit){ ldRegression(g, ev, P, on, g.to, dataEnd);
-          g.nextLabel = i + 1 < segs.length ? `day 1 of ${segs[i+1].mode === 'LD' ? 'the next LD' : segs[i+1].mode}` : 'extrapolated'; }
+          if(i + 1 < segs.length){
+            const nx = segs[i+1], dn = g.ldFit ? Math.max(1, Math.floor((g.ldFit.next.onH - nx.startHour)/P + 1e-6) + 1) : 1;
+            g.nextLabel = `day ${dn} of ${nx.mode === 'LD' ? 'the next LD' : nx.mode}`;
+          }else g.nextLabel = 'extrapolated'; }
       }else{
         // 0° reference
         // LL/DD: R = 0-degree reference (h); P0 = cycle length used to count cycles (previous LD period)
@@ -3492,6 +3555,8 @@ $('phaseRef').addEventListener('change', () => { state.phase_ref = $('phaseRef')
 $('draw_fit').addEventListener('change', () => { state.draw_fit = $('draw_fit').checked; changed(); });
 // 'LD: also fit a regression line' (phase on the last LD day and the day after)
 $('ld_fit').addEventListener('change', () => { state.ld_fit = $('ld_fit').checked; changed(); });
+// 'Count the unchanged start of a condition with the one before' (effective boundaries)
+$('carry_over').addEventListener('change', () => { state.carry_over = $('carry_over').checked; changed(); });
 // selection helpers: key of the list, test, set/unset (values matched by their 4-decimal key)
 const selKey = kk => kk === 'p' ? 'sel_peaks' : 'sel_troughs';
 function isSel(kk, v){ return state[selKey(kk)].some(x => k4(x) === k4(v)); }
@@ -3968,7 +4033,7 @@ function syncControls(){                       // state -> every control (after 
   $('xMajor').value = state.x_major; $('xMinor').value = state.x_minor;
   syncSwatches();
   for(const nm of ['drag_mode','sel_target']) document.querySelectorAll(`input[name=${nm}]`).forEach(r => r.checked = r.value === state[nm]);
-  $('phaseRef').value = state.phase_ref; $('draw_fit').checked = !!state.draw_fit; $('ld_fit').checked = !!state.ld_fit;
+  $('phaseRef').value = state.phase_ref; $('draw_fit').checked = !!state.draw_fit; $('ld_fit').checked = !!state.ld_fit; $('carry_over').checked = !!state.carry_over;
   for(const id of ['show_values','link_peak','link_trough','label_onsets','label_row_starts','mark_times','mark_changes','rows_auto','show_points']) $(id).checked = !!state[id];
   $('ts_draw').value = state.ts_draw; $('ts_draw_scale').value = state.ts_draw_scale;
   document.querySelectorAll('input[name=ts_draw_data]').forEach(r => r.checked = r.value === state.ts_draw_data);
