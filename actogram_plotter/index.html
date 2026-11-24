@@ -671,10 +671,16 @@ const DEFAULT_TZ = 'America/Chicago', DEFAULT_PERIOD = '24:00', EXAMPLE_TITLE = 
 const PEAK = '#d32f2f', TROUGH = '#1f4fd1';
 // colours of the light and dark bands (12 each; the first is the default)
 // palettes: [name shown to the user, hex code]
-const LIGHT_COLORS = [['Pale yellow','#fff8d6'], ['Lemon','#fff9c4'], ['Cream','#fffbf0'], ['Amber','#ffecb3'], ['Peach','#ffe8d2'], ['Apricot','#ffe0b2'], ['White','#ffffff'], ['Pale green','#eaf4df'], ['Mint','#dff1e0'], ['Sky','#e6f2fb'], ['Pale pink','#fbe6e8'], ['Lavender','#f0ecf8']];
+const LIGHT_COLORS = [['White','#ffffff'], ['Pale yellow','#fff8d6'], ['Lemon','#fff9c4'], ['Cream','#fffbf0'], ['Amber','#ffecb3'], ['Peach','#ffe8d2'], ['Apricot','#ffe0b2'], ['Pale green','#eaf4df'], ['Mint','#dff1e0'], ['Sky','#e6f2fb'], ['Pale pink','#fbe6e8'], ['Lavender','#f0ecf8']];
 const DARK_COLORS = [['Light grey','#dadada'], ['Grey','#c4c4c4'], ['Mid grey','#adadad'], ['Dark grey','#969696'], ['Graphite','#808080'], ['Slate','#c3c9d2'], ['Blue grey','#aebbcc'], ['Steel','#9dadc7'], ['Indigo','#a9abcf'], ['Purple grey','#bfb5cc'], ['Taupe','#c4bbb1'], ['Teal grey','#9dbab8']];
 // Resolve a stored colour (hex or palette name) to one of the palette's colours; unknown values give the default (first) colour.
 const pickColor = (v, pal) => { const t = String(v||'').trim().toLowerCase(); const hit = pal.find(([n, c]) => t === c || t === n.toLowerCase()); return hit ? hit[1] : pal[0][1]; };
+// Colours of the conditions in the phase analysis: the ring around every selected point and the regression lines
+// of a condition share its colour, so it is clear which points went into which fit (including points from the
+// unchanged start of the next condition).  Six colours (one per condition: up to 5 changes), chosen to differ
+// from the red peaks, the blue troughs and the grey/white light-dark bands.
+const COND_COLORS = ['#f2bf6b', '#7fd1b0', '#bfa2dc', '#f0a8cb', '#c9c779', '#8fdbe6'];
+const condColor = i => i >= 0 ? COND_COLORS[i % COND_COLORS.length] : '#111';   // -1 (outside any condition): black
 const PLACED = '#f57c00', ZERO = '#2e7d32';   // asterisks - orange: samples placed; green: 0 h of the data
 // SVG for a 6-pointed asterisk (three crossing lines) centred at (cx, cy): marks 0 h of the data and the sample placement.
 const asterisk = (cx, cy, r, col) => [90, 30, 150].map(a => { const dx = r*Math.cos(a*Math.PI/180), dy = r*Math.sin(a*Math.PI/180);
@@ -2845,11 +2851,10 @@ function buildSVG(S, res){
       out.push(`<line x1="${X(x1).toFixed(2)}" y1="${Y(r).toFixed(2)}" x2="${X(x1 + (h2 - h1) - T).toFixed(2)}" y2="${Y(r+1).toFixed(2)}" ${style}/>`);
     }
   };
-  // open diamonds of the LD regression (last LD day, day after); drawn after the points so they stay visible
-  const fitMarks = [];
+  // the phase analysis (condition of every selected point, fits); needed for the ring colours and the lines
+  const ana = res.ld && (S.draw_fit || (S.sel_peaks || []).length || (S.sel_troughs || []).length) ? analyze(S, res) : null;
   // 'Draw fitted lines'
-  if(S.draw_fit){
-    const ana = analyze(S, res);
+  if(S.draw_fit && ana){
     out.push(`<g clip-path="url(#pc)">`);
     const lo = o + (firstRow - 1)*T, hi = o + (lastRow + 2)*T;
     // LD: dotted line at the mean phase in every cycle of the condition
@@ -2859,40 +2864,29 @@ function buildSVG(S, res){
       for(let nn = Math.ceil((a - base)/P - 1e-9); base + (nn + 1)*P < b + 1e-9; nn++)
         seg2(base + nn*P, base + (nn + 1)*P, 'stroke="#111" stroke-width="0.9" stroke-dasharray="1.5 2.5"');
     }
-    // LD regression (option 'LD: also fit a regression line'): dashed line in the colour of the type from the
-    // first fitted cycle to the day after the last LD day, with open diamonds at the fitted events of the last
-    // LD day and of the day after
+    // LD regression (option 'LD: also fit a regression line'): dashed line in the colour of the condition from
+    // the first fitted cycle to the fitted event of the last LD day (or of the day after, when there is one)
     for(const g2 of ana.groups){
       const F = g2.ldFit; if(g2.mode !== 'LD' || !F) continue;
-      const col = g2.kind === 'Peak' ? PEAK : TROUGH;
+      const col = condColor(g2.seg);
       // the line runs to the day after, or to the last LD day when there is no day after
       const kEnd = (F.next || F.last).k;
       for(let nn = Math.min(F.n0, kEnd); nn < Math.max(F.n1, kEnd); nn++){
         const h1 = g2.on + F.b + F.slope*nn, h2 = h1 + F.slope;
-        seg2(h1, h2, `stroke="${col}" stroke-width="1.3" stroke-dasharray="5 3" opacity="0.75"`);
-      }
-      // half-size of the diamond: just outside the selection ring of a point
-      const dm = Math.max(1.6, Math.min(4, rh*0.32)) + 4.8;   // point radius + room for the selection ring
-      for(const d of [F.last, F.next].filter(Boolean)){
-        const day = Math.floor((d.h - o)/T), x = d.h - o - day*T;
-        for(const [xx, yy] of [[x, day], ...(dbl ? [[x + T, day - 1]] : [])]){
-          if(yy < firstRow || yy > lastRow) continue;
-          const cx = X(xx), cy = Y(yy);
-          fitMarks.push(`<path d="M${cx.toFixed(2)},${(cy - dm).toFixed(2)} L${(cx + dm).toFixed(2)},${cy.toFixed(2)} L${cx.toFixed(2)},${(cy + dm).toFixed(2)} L${(cx - dm).toFixed(2)},${cy.toFixed(2)} Z" fill="none" stroke="${col}" stroke-width="1.6"><title>${g2.kind}, LD fit ${d === F.last ? 'last LD day' : 'day after'}: ZT ${d.zt.toFixed(2)} h</title></path>`);
-        }
+        seg2(h1, h2, `stroke="${col}" stroke-width="1.8" stroke-dasharray="5 3"`);
       }
     }
-    // LL/DD: the regression line t = b + tau*n between the first and last selected cycle
+    // LL/DD: the regression line t = b + tau*n between the first and last selected cycle, in the condition's colour
     for(const g2 of ana.groups){
       if(g2.mode === 'LD' || !Number.isFinite(g2.period)) continue;
-      const col = g2.kind === 'Peak' ? PEAK : TROUGH;
+      const col = condColor(g2.seg);
       const n0 = Math.min(...g2.events.map(e => e.cycle)), n1 = Math.max(...g2.events.map(e => e.cycle));
       for(let nn = n0; nn < n1; nn++){
         // fitted time of cycle nn in hours after 0 h
         const h1 = g2.R + g2.b + g2.period*nn, h2 = h1 + g2.period;
         for(let r = firstRow; r <= lastRow; r++){
           const x1 = h1 - o - r*T; if(x1 < 0 || x1 >= span) continue;
-          out.push(`<line x1="${X(x1).toFixed(2)}" y1="${Y(r).toFixed(2)}" x2="${X(x1 + (h2 - h1) - T).toFixed(2)}" y2="${Y(r+1).toFixed(2)}" stroke="${col}" stroke-width="1.4" stroke-dasharray="5 3" opacity="0.8"/>`);
+          out.push(`<line x1="${X(x1).toFixed(2)}" y1="${Y(r).toFixed(2)}" x2="${X(x1 + (h2 - h1) - T).toFixed(2)}" y2="${Y(r+1).toFixed(2)}" stroke="${col}" stroke-width="1.8" stroke-dasharray="5 3"/>`);
         }
       }
     }
@@ -2903,6 +2897,8 @@ function buildSVG(S, res){
   // point radius scales with the row height
   const rad = Math.max(1.6, Math.min(4, rh*0.32));
   const selSets = selectedSets(S), hits = [];
+  // condition of every selected point (from the analysis): 'p:value' / 't:value' -> condition index
+  const segOf = new Map((ana ? ana.events : []).map(e => [`${e.kind === 'Peak' ? 'p' : 't'}:${k4(e.h)}`, e.seg]));
   // the points; each also gets an invisible larger circle (class 'hit') that receives clicks
   for(const [vals, col, kk] of [[peaks, PEAK, 'p'], [troughs, TROUGH, 't']]){
     if(!S.show_points) break;
@@ -2916,7 +2912,9 @@ function buildSVG(S, res){
       if(dbl && day - 1 >= firstRow && day - 1 <= lastRow) pts.push([x + T, day - 1]);
       for(const [px, pr] of pts){
         out.push(`<circle cx="${X(px).toFixed(2)}" cy="${Y(pr).toFixed(2)}" r="${rad.toFixed(2)}" fill="${col}"/>`);
-        if(isSel) out.push(`<circle cx="${X(px).toFixed(2)}" cy="${Y(pr).toFixed(2)}" r="${(rad + 2.6).toFixed(2)}" fill="none" stroke="#111" stroke-width="1.3"/>`);
+        // ring of a selected point: the colour of the condition it is analysed with (black if none)
+        if(isSel){ const sg = segOf.has(`${kk}:${k4(h)}`) ? segOf.get(`${kk}:${k4(h)}`) : -1;
+          out.push(`<circle cx="${X(px).toFixed(2)}" cy="${Y(pr).toFixed(2)}" r="${(rad + 2.6).toFixed(2)}" fill="none" stroke="${condColor(sg)}" stroke-width="2"/>`); }
         // data-k (kind) and data-v (value) tell the click handler which point it is
         hits.push(`<circle class="hit" data-k="${kk}" data-v="${h}" cx="${X(px).toFixed(2)}" cy="${Y(pr).toFixed(2)}" r="${Math.max(6, rad + 3).toFixed(2)}" fill="transparent"/>`);
         if(S.show_values) out.push(`<text x="${X(px + 0.02*T).toFixed(2)}" y="${(Y(pr) - 4).toFixed(2)}" font-size="7.5" fill="${col}">${h.toFixed(1)}</text>`);
@@ -2924,7 +2922,6 @@ function buildSVG(S, res){
     }
   }
   out.push(...markSvg);                          // asterisks on top of the points
-  out.push(...fitMarks);                         // LD regression: fitted events on the last LD day and the day after
   out.push(...hits);                             // invisible targets for clicking points
   if(!all.length && !sdata) out.push(`<text x="${ml + plotW/2}" y="${(plotTop + plotH/2 + 5).toFixed(1)}" font-size="14" fill="#666" text-anchor="middle">Paste peak and trough times to plot them</text>`);
 
@@ -2952,9 +2949,13 @@ function buildSVG(S, res){
   if(ld){
     ly += 22;
     out.push(`<text x="${lx-8}" y="${ly}" font-size="10.5" font-weight="700" fill="${C.ink}">Conditions</text>`);
-    for(const s of ld.segs){ ly += 15;
+    // each condition with a ring in its colour (= the rings of its selected points and its regression lines)
+    ld.segs.forEach((s, i) => { ly += 15;
       const name = s.mode === 'LD' ? `L${fmtDur(s.L)} D${fmtDur(s.D)}` : s.mode;
-      out.push(`<text x="${lx-8}" y="${ly}" font-size="10" fill="#444">${esc(name)} from ${g(s.startHour)} h</text>`); }
+      out.push(`<circle cx="${lx-3}" cy="${ly-3.5}" r="4" fill="none" stroke="${condColor(i)}" stroke-width="1.8"/>`);
+      out.push(`<text x="${lx+5}" y="${ly}" font-size="10" fill="#444">${esc(name)} from ${g(s.startHour)} h</text>`); });
+    ly += 13;
+    out.push(`<text x="${lx-8}" y="${ly}" font-size="9" fill="#777">Ring and line colours: condition used</text>`);
   }
   // heat map: a vertical colour bar with a linear gradient and its labels
   if(srows && srows.whole && S.ts_draw === 'heatmap'){          // colour bar under the legend
