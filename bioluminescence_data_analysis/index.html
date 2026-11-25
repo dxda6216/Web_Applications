@@ -4,7 +4,7 @@
   Bioluminescence Data Analysis - web edition (single self-contained HTML file)
   ============================================================================
 
-  Last updated: 2026-11-25 21:30:30 UTC
+  Last updated: 2026-11-25 23:38:20 UTC
 
   Converts binary bioluminescence logger files and analyses circadian rhythms
   entirely in the browser: nothing is uploaded and no internet connection is
@@ -62,7 +62,7 @@ header.top { background: var(--card); border-bottom: 1px solid var(--line); }
 .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
 header.top .wrap { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; padding-top: 14px; padding-bottom: 12px; }
 header.top h1 { font-size: 18px; margin: 0; letter-spacing: .1px; }
-header.top .sub { color: var(--muted); font-size: 12.5px; }
+header.top .sub { color: var(--muted); font-size: 12.5px; flex-basis: 100%; line-height: 1.55; }   /* two lines under the title */
 .privacy { margin-left: auto; font-size: 12px; color: var(--ok); background: var(--ok-soft); padding: 3px 9px; border-radius: 999px; }
 main { padding: 18px 0 60px; }
 /* ---- Step cards and their numbered badges (green when the step is complete) ---- */
@@ -211,8 +211,9 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 10px
 <!-- Header: title and the privacy note (all processing is local) -->
 <header class="top"><div class="wrap">
   <h1>Bioluminescence Data Analysis</h1>
-  <span class="sub">Binary logger files &rarr; CSV / Excel &rarr; regression, sine fit, wavelet, FFT &rarr; report PDF</span>
   <span class="privacy" title="Everything is computed in this browser tab. Nothing is uploaded.">&#128274; Runs offline in your browser &mdash; no data leaves this computer</span>
+  <div class="sub">For analyzing bioluminescence data recorded by a 32-channel PMT-based photon counting instrument (35 mm culture dishes)<br>
+    Binary logger files &rarr; regression, sine fit, wavelet, FFT, periodogram analyses &rarr; CSV / Excel export &amp; PDF report</div>
 </div></header>
 
 <!-- The four steps, then the results (shown after a run) -->
