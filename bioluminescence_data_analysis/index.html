@@ -1,12 +1,12 @@
 <!doctype html>
 <!--
   ============================================================================
-  LumiCycle Data Analysis - web edition (single self-contained HTML file)
+  Bioluminescence Data Analysis - web edition (single self-contained HTML file)
   ============================================================================
 
-  Last updated: 2026-11-25 21:04:35 UTC
+  Last updated: 2026-11-25 21:30:30 UTC
 
-  Converts LumiCycle-type binary logger files and analyses circadian rhythms
+  Converts binary bioluminescence logger files and analyses circadian rhythms
   entirely in the browser: nothing is uploaded and no internet connection is
   needed (no external scripts, fonts or libraries).
 
@@ -23,7 +23,7 @@
     outputs.js      assembles all output files
     review.js       "Review the analysis" (written to files only on "Finish review")
     app.js          page logic (steps 1-4 and results)
-  It is a JavaScript port of LumiCycle_Data_Analysis_with_Wavelet_and_FFT_app.py,
+  It is a JavaScript port of the desktop Python app,
   checked number by number against it (test/compare.js).
   ============================================================================
 -->
@@ -37,7 +37,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>LumiCycle Data Analysis</title>
+<title>Bioluminescence Data Analysis</title>
 <style>
 /* ---- Colour tokens (light theme); every colour on the page comes from these ---- */
 :root {
@@ -210,7 +210,7 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 10px
 <body>
 <!-- Header: title and the privacy note (all processing is local) -->
 <header class="top"><div class="wrap">
-  <h1>LumiCycle Data Analysis</h1>
+  <h1>Bioluminescence Data Analysis</h1>
   <span class="sub">Binary logger files &rarr; CSV / Excel &rarr; regression, sine fit, wavelet, FFT &rarr; report PDF</span>
   <span class="privacy" title="Everything is computed in this browser tab. Nothing is uploaded.">&#128274; Runs offline in your browser &mdash; no data leaves this computer</span>
 </div></header>
@@ -334,7 +334,7 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 10px
   </section>
 </main>
 <!-- Footer: version -->
-<footer>LumiCycle Data Analysis, web edition <span id="ver"></span> &middot; JavaScript port of the desktop app; numerically checked against it.</footer>
+<footer>Bioluminescence Data Analysis, web edition <span id="ver"></span> &middot; JavaScript port of the desktop app; numerically checked against it.</footer>
 
 <!-- Date and time picker for the experiment start (filled by the Picker module of app.js) -->
 <dialog id="dt-dlg" aria-labelledby="dt-title">
@@ -376,10 +376,9 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 10px
      module uses the ones above it. -->
 <script id="lc-core">'use strict';
 /* =============================================================================
- * LumiCycle Data Analysis (web) - analysis core
+ * Bioluminescence Data Analysis (web) - analysis core
  * =============================================================================
- * JavaScript port of LumiCycle_Data_Analysis_with_Wavelet_and_FFT_app.py (the
- * desktop app).  It contains everything numerical and has no DOM access, so the
+ * JavaScript port of the desktop Python app.  It contains everything numerical and has no DOM access, so the
  * same file runs in three places:
  *   - the page itself (form checks, viewers, re-computations after edits),
  *   - a Web Worker (the main analysis, so the page stays responsive; the worker
@@ -413,7 +412,7 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 10px
  * ========================================================================== */
 // Everything lives in one closure; the public functions are returned at the end.
 const LC = (() => {
-  const APP_TITLE = 'LumiCycle Data Analysis (web)';
+  const APP_TITLE = 'Bioluminescence Data Analysis (web)';
   const APP_VERSION = '1.0';
 
   // ------------------------------------------------------------------ helpers
@@ -4856,19 +4855,9 @@ const Review = (() => {
       sum: s => [s.reportPages && 'report', 'plots', s.samplePages && 'sample pages', s.fitPages && 'fit pages'].filter(Boolean).join(', ') + `; ticks ${s.majorTickHours} h` },
   ];
   // Settings are remembered in the browser (localStorage) between visits; storage may be blocked, hence the try/catch.
-  // v2: the default number of wavelet periods became 1000; settings saved by
-  // v1 are taken over, except the old default of 200 periods.
-  const STORE = 'lumicycle-web-settings-v2', OLD_STORE = 'lumicycle-web-settings-v1';
+  const STORE = 'bioluminescence-web-settings-v1';
   let settings = { ...LC.DEFAULTS };
-  try {
-    let saved = localStorage.getItem(STORE);
-    if (saved == null && localStorage.getItem(OLD_STORE) != null) {
-      const old = JSON.parse(localStorage.getItem(OLD_STORE));
-      if (old.waveletNPeriods === 200) delete old.waveletNPeriods;
-      saved = JSON.stringify(old);
-    }
-    Object.assign(settings, JSON.parse(saved || '{}'));
-  } catch (e) { /* storage blocked */ }
+  try { Object.assign(settings, JSON.parse(localStorage.getItem(STORE) || '{}')); } catch (e) { /* storage blocked */ }
   const inputs = {};
   /** Create the settings form from GROUPS. */
   function buildSettings() {
@@ -4903,7 +4892,7 @@ const Review = (() => {
     for (const { el, enabled, lab } of Object.values(inputs)) { const on = !enabled || enabled(settings); el.disabled = !on; lab.style.opacity = on ? 1 : 0.5; }
     for (const g of GROUPS) g.sumEl.textContent = g.sum(settings);
   }
-  $('reset-settings').onclick = () => { settings = { ...LC.DEFAULTS }; try { localStorage.removeItem(STORE); localStorage.removeItem(OLD_STORE); } catch (e) { /* ignore */ } buildSettings(); };
+  $('reset-settings').onclick = () => { settings = { ...LC.DEFAULTS }; try { localStorage.removeItem(STORE); } catch (e) { /* ignore */ } buildSettings(); };
   $('label-choice').onchange = () => { $('label-other').disabled = $('label-choice').value !== '__other'; if (!$('label-other').disabled) $('label-other').focus(); };
   // The Y-axis label: 'Bioluminescence (CPS)' or the user's own label.
   const valueLabel = () => ($('label-choice').value === '__other' ? $('label-other').value.trim() || 'Value' : $('label-choice').value);
@@ -4974,7 +4963,7 @@ const Review = (() => {
    * Every change re-validates: green read-back, red error with the reason, or
    * the CDT/CST choice for the repeated November hour; below it the comparison
    * with the first record of the data.  The chosen mode is remembered in the browser. */
-  const ct = $('ct'), MODE_STORE = 'lumicycle-web-start-mode';
+  const ct = $('ct'), MODE_STORE = 'bioluminescence-web-start-mode';
   const DAY_MS = 24 * LC.HOUR, pad2 = n => String(n).padStart(2, '0');
   // The date and time chosen in the picker: {local (naive ms), dst ('CDT' | 'CST' | null)} or null.
   let picked = null;
